@@ -1,0 +1,38 @@
+<odoo>
+  <data>
+    <!-- Acción que mostrará el menu de los servicios -->
+    <record model="ir.actions.act_window" id="community.action_services">
+      <field name="name">Servicios</field>
+      <field name="res_model">services</field>
+      <field name="view_mode">kanban,tree,form</field>
+    </record>
+
+    <record id="open_view_res_partner_list" model="ir.actions.act_window">
+      <field name="name">Usuarios</field>
+      <field name="res_model">res.partner</field>
+      <field name="view_mode">kanban,tree,form,activity</field>
+      <field name="domain">[]</field>
+      <field name="view_id" eval="False"/>
+    </record>
+
+    <!-- actions -->
+    <menuitem 
+      id="community_menu" 
+      name="Community" 
+      sequence="1"/>
+
+    <menuitem 
+      id="community_services" 
+      name="Servicios" 
+      parent="community_menu" 
+      action="community.action_services" 
+      sequence="1"/>
+
+    <menuitem
+      id="community_users_origin"
+      name="Usuarios"
+      parent="community_menu"
+      action="open_view_res_partner_list"
+      sequence="3"/>
+  </data>
+</odoo>

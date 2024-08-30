@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+services_community,services_community,model_services,community_group_user,1,1,1,1
+news_community,news_community,model_news,community_group_user,1,1,1,1
+rewards_community,rewards_community,model_rewards,community_group_user,1,1,1,1
+reviews_commmunity,reviews_commmunity,model_reviews,community_group_user,1,1,1,1
+proposals_community,proposals_community,model_proposals,community_group_user,1,1,1,1
+comments_proposals_community,comments_proposals_community,model_comments,community_group_user,1,1,1,1

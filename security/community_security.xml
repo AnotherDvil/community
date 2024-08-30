@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<odoo>
+    <!--Crea una categoría en los permisos-->
+    <record id="categoria_modulo_comm" model="ir.module.category">
+        <field name="name">Community</field>
+    </record>
+    <!--Grupo de categorias-->
+    <record id="community_group_user" model="res.groups">
+        <!--Nombre del usuario-->
+        <field name="name">Usuario</field>
+        <!--Categoria-->
+        <field name="category_id" ref="categoria_modulo_comm"/>
+        <!--Implementa los id's de seguridad (permisos del usuario base y podemos agregar mas)-->
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+</odoo>

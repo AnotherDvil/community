@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="inherit_view_res_partner_community" model="ir.ui.view">
+            <field name="name">res_partner_community.view.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='internal_notes']" position="after">
+                    <page name="access_page" string="Datos Community">
+                        <group>
+                            <group string="Información del usuario">
+                                <field name="email"/>
+                                <field name="password" />
+                                <field name="archived" />
+                                <field name="job" />
+                                <field name="phone" />
+                                <field name="service_id_e" />
+                            </group>
+
+                            <group string="Acceso">
+                                <field name="token" />
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
