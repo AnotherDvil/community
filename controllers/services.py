@@ -6,7 +6,7 @@ from odoo.http import request, Response
 
 class Services(http.Controller):
 
-    @http.route('/services', type="json", auth='none', methods=['GET'], csrf=False, cors='*')
+    @http.route('/services', type="http", auth='none', methods=['GET'], csrf=False, cors='*')
     def get_services(self, **kwargs):
         services = request.env['services'].sudo().search([('name', '!=', False), ('archived', '=', False)])
         unidades = []
@@ -18,30 +18,38 @@ class Services(http.Controller):
                 'qualification': service.qualification,
                 'description': service.description
             })
-        json_object = json.dumps({"data": unidades})
+        json_object = json.dumps(unidades)
         return json_object
 
-    @http.route('/services/<int:id_service>', type="json", auth='none', methods=['GET'], csrf=False, cors='*')
+    @http.route('/services/<int:id_service>', type="http", auth='none', methods=['GET'], csrf=False, cors='*')
     def get_service_especific(self, id_service, **kwargs):
+        # Solicitudes BDD
         services = request.env['services'].sudo().search([('id', '=', id_service), ('name', '!=', False), ('archived', '=', False)])
+        novedades = request.env['news'].sudo().search([('service_id', '=', id_service), ('name', '!=', False)])
         unidades = []  # Inicializar la lista vacía antes de la verificación
         if services.exists():
             for service in services:
+                novedades_list = [] # Crea una lista para almacenar las novedades
+                if novedades.exists():
+                    for novedad in novedades:
+                        novedades_list.append({
+                            'name': novedad.name,
+                            'description': novedad.description
+                        })
+
                 unidades.append({
                     'id': service.id,
                     'name': service.name,
                     'image': service.image,
                     'qualification': service.qualification,
-                    'description': service.description
+                    'description': service.description,
+                    'novedades': novedades_list
                 })
         else:
-            # Si no se encuentran servicios, se añade un mensaje a la lista `unidades`
-            unidades.append({
+            unidades.append({ # Si no se encuentran servicios, se añade un mensaje a la lista `unidades`
                 'message': 'No se encontraron servicios con el ID especificado.'
             })
-        # Convertir el resultado a JSON
-        json_object = json.dumps({"data": unidades})
-        # Retornar la respuesta como JSON con el código de estado 200
+        json_object = json.dumps(unidades) # Convierte el resultado a JSON
         return json_object
 
     @http.route('/services/create', type="json", auth='public', methods=['POST'], csrf=False, cors='*')
@@ -53,13 +61,13 @@ class Services(http.Controller):
         new_service = request.env['services'].sudo().create(new_services)
         if new_services:
             response = {
-                'succes': True,
+                'success': True,
                 'message': 'El servicio se creo con exito',
                 'id': new_service.id
             }
         else:
             response = {
-                'succes': False,
+                'success': False,
                 'message': 'No se pudo crear el servicio'
             }
         json_response = json.dumps(response)
