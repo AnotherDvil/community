@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import secrets
 import json
+from base64 import b64encode
 from odoo import http
 from odoo.http import request, Response
 
@@ -14,7 +15,7 @@ class Services(http.Controller):
             unidades.append({
                 'id': service.id,
                 'name': service.name,
-                'image': service.image,
+                'image': b64encode(service.image).decode() if service.image else False,
                 'qualification': service.qualification,
                 'description': service.description
             })
@@ -56,7 +57,11 @@ class Services(http.Controller):
     def create_services(self, **kwargs):
         new_services = {
             'name': kwargs.get('name'),
-            'direction': kwargs.get('direction')
+            'direction': kwargs.get('direction'),
+            'image': kwargs.get('image'),
+            'number_phone': kwargs.get('number_phone'),
+            'email': kwargs.get('email'),
+            'owner': kwargs.get('owner')
         }
         new_service = request.env['services'].sudo().create(new_services)
         if new_services:
@@ -100,7 +105,12 @@ class Services(http.Controller):
             }
         else:
             new_data = {
-                'name': kwargs.get('name', service.name)
+                'name': kwargs.get('name', service.name),
+                'direction': kwargs.get('direction', service.direction),
+                'image': kwargs.get('image', service.image),
+                'number_phone': kwargs.get('number_phone', service.number_phone),
+                'email': kwargs.get('email', service.email),
+                'owner': kwargs.get('owner', service.owner)
             }
             service.write(new_data)
             response = {
