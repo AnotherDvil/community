@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import secrets
 import json
-from base64 import b64encode
+import base64
 from odoo import http
 from odoo.http import request, Response
 
@@ -15,7 +15,7 @@ class Services(http.Controller):
             unidades.append({
                 'id': service.id,
                 'name': service.name,
-                'image': b64encode(service.image).decode() if service.image else False,
+                'image': base64.b64encode(service.image).decode() if service.image else False,
                 'qualification': service.qualification,
                 'description': service.description
             })
@@ -41,7 +41,7 @@ class Services(http.Controller):
                 unidades.append({
                     'id': service.id,
                     'name': service.name,
-                    'image': service.image,
+                    'image': base64.b64encode(service.image).decode() if service.image else False,
                     'qualification': service.qualification,
                     'description': service.description,
                     'novedades': novedades_list
