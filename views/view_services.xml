@@ -135,7 +135,9 @@
                         </page>
 
                         <page string="Descripción">
-                            <field name="description" placeholder="Descripción..." widget='html'/>
+                            <group>
+                                <field name="description" placeholder="Descripción..."/>
+                            </group>
                         </page>
                     </notebook>
                 </sheet>
