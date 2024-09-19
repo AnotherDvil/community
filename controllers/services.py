@@ -6,7 +6,6 @@ from odoo import http
 from odoo.http import request, Response
 
 class Services(http.Controller):
-
     @http.route('/services', type="http", auth='none', methods=['GET'], csrf=False, cors='*')
     def get_services(self, **kwargs):
         services = request.env['services'].sudo().search([('name', '!=', False), ('archived', '=', False)])
@@ -21,6 +20,34 @@ class Services(http.Controller):
             })
         json_object = json.dumps(unidades)
         return json_object
+
+    @http.route('/search_service/<int:id_user>', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
+    def search_service(self, id_user, **kwargs):
+        access_code = kwargs.get('access_code')
+        print(access_code)
+        # Busca el servicio por el código de acceso
+        service = request.env['services'].sudo().search([('access_code', '=', access_code)], limit=1)
+        if service:
+            # Busca el usuario por su ID
+            user = request.env['res.partner'].sudo().search([('id', '=', id_user)], limit=1)
+            if user:
+                # Asocia el usuario con el servicio (empleado)
+                user.sudo().write({'service_id_e': service.id})
+                response = {
+                    'status': True,
+                    'message': 'El usuario fue agregado al servicio como empleado.'
+                }
+            else:
+                response = {
+                    'status': False,
+                    'message': 'El usuario no fue encontrado.'
+                }
+        else:
+            response = {
+                'status': False,
+                'message': 'El código de acceso no se encontró.'
+            }
+        return json.dumps(response)
 
     @http.route('/services/<int:id_service>', type="http", auth='none', methods=['GET'], csrf=False, cors='*')
     def get_service_especific(self, id_service, **kwargs):
