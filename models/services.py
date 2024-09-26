@@ -20,6 +20,23 @@ class services(models.Model):
     qualification = fields.Float('Calificación', tracking=True)
     access_code = fields.Char('Código de acceso', tracking=True, readonly=True)
     description = fields.Char('Descripción', tracking=True)
+    category = fields.Selection([
+        ('art', 'Arte'),
+        ('tech', 'Tecnología'),
+        ('health', 'Salud'),
+        ('education', 'Educación'),
+        ('retail', 'Comercio minorista'),
+        ('hospitality', 'Hostelería y Turismo'),
+        ('finance', 'Finanzas y Seguros'),
+        ('construction', 'Construcción e Ingeniería'),
+        ('entertainment', 'Medios y Entretenimiento'),
+        ('logistics', 'Logística y Transporte'),
+        ('food', 'Comida'),
+        ('mode', 'Moda'),
+        ('personal_services', 'Servicios personales'),
+        ('creative_services', 'Servicios creativos'),
+        ('maintenance', 'Servicios de mantenimiento'),
+    ], string='Categoría', tracking=True)
 
     @api.model
     def create(self, vals):

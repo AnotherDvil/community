@@ -47,10 +47,53 @@ class CommunityLogin(http.Controller):
                 'message': 'Token invalido'
             }
         return response
-    
-    import secrets
 
     @http.route('/signup', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
+    def signup(self, **kwargs):
+        # Asignar valores del usuario
+        name = kwargs.get('name')
+        email = kwargs.get('email')
+        password = kwargs.get('password')
+        user_type = kwargs.get('user_type')
+
+        # Búsqueda de usuario por email
+        user = request.env['res.partner'].sudo().search([('email', '=', email)], limit=1)
+        if user:  # Si existe un usuario, responder negativamente
+            response = {
+                'status': False,
+                'message': 'El correo ya está registrado'
+            }
+            return response
+        else:
+            # Generar un token único para el usuario
+            token = secrets.token_urlsafe(20)
+
+            if user_type == 'user':  # Si el tipo de usuario es 'usuario'
+                usuario = request.env['res.partner'].sudo().create({
+                    'name': name,
+                    'email': email,
+                    'password': password,
+                    'job': user_type,
+                    'token': token  # Guardar el token generado
+                })
+
+                if usuario:
+                    response = {
+                        'status': True,
+                        'id': usuario.id,
+                        'name': usuario.name,
+                        'email': usuario.email,
+                        'token': token  # Devolver el token en la respuesta
+                    }
+                else:
+                    response = {
+                        'status': False,
+                        'message': 'Hubo un error al crear al usuario'
+                    }
+
+                return response
+
+    """ @http.route('/signup', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
     def signup(self, **kwargs):
         # Asignar valores del usuario
         name = kwargs.get('name')
@@ -190,7 +233,7 @@ class CommunityLogin(http.Controller):
                             'message': 'Hubo un error al crear al dueño'
                         }
 
-                return response
+                return response """
 
     """@http.route('/signup', type="http", auth="none", methods=['POST'], csrf=False, cors='*')
     def signup(self, **kwargs):

@@ -24,7 +24,6 @@ class Services(http.Controller):
     @http.route('/search_service/<int:id_user>', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
     def search_service(self, id_user, **kwargs):
         access_code = kwargs.get('access_code')
-        print(access_code)
         # Busca el servicio por el código de acceso
         service = request.env['services'].sudo().search([('access_code', '=', access_code)], limit=1)
         if service:

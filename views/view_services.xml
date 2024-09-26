@@ -66,6 +66,7 @@
                             <field name="bank_account_id" />
                             <field name="qualification" />
                             <field name="archived" />
+                            <field name="category" />
                         </group>
                     </group>
                     <notebook>
