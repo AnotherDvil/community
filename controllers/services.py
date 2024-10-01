@@ -87,10 +87,14 @@ class Services(http.Controller):
             'image': kwargs.get('image'),
             'number_phone': kwargs.get('number_phone'),
             'email': kwargs.get('email'),
-            'owner': kwargs.get('owner')
+            'owner': kwargs.get('owner'),
+            'description': kwargs.get('description')
         }
-        new_service = request.env['services'].sudo().create(new_services)
-        if new_services:
+        
+        update_user = request.env['res.partner'].sudo().search([('id', '=', new_services['owner']), ('job', '!=', 'owner')], limit=1)
+        if new_services and update_user:
+            new_service = request.env['services'].sudo().create(new_services)
+            update_user.write({'job': 'owner'})
             response = {
                 'success': True,
                 'message': 'El servicio se creo con exito',

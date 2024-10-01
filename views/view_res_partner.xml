@@ -15,7 +15,7 @@
                                 <field name="archived" />
                                 <field name="job" />
                                 <field name="phone" />
-                                <field name="service_id_e" />
+                                <field name="service_id_e" attrs="{'invisible': [('job', '!=', 'employee')]}"/>
                             </group>
 
                             <group string="Acceso">

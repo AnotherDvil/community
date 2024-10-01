@@ -15,5 +15,5 @@ class Contacts(models.Model):
     ], string='Tipo de usuario')
     
     
-    service_id_e = fields.Many2one('services', string='Servicio')
+    service_id_e = fields.Many2one('services', string='Servicio inscrito')
     service_id_f = fields.Many2one('services', string="Servicio")
