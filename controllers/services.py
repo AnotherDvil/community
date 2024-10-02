@@ -79,7 +79,7 @@ class Services(http.Controller):
         json_object = json.dumps(unidades) # Convierte el resultado a JSON
         return json_object
 
-    @http.route('/services/create', type="json", auth='public', methods=['POST'], csrf=False, cors='*')
+    @http.route('/services/create', type="json", auth='none', methods=['POST'], csrf=False, cors='*')
     def create_services(self, **kwargs):
         new_services = {
             'name': kwargs.get('name'),
@@ -90,7 +90,7 @@ class Services(http.Controller):
             'owner': kwargs.get('owner'),
             'description': kwargs.get('description')
         }
-        update_user = request.env['res.partner'].sudo().search([('id', '=', new_services['owner'])], limit=1)
+        update_user = request.env['res.partner'].sudo().search([('id', '=', int(new_services['owner']))], limit=1)
         if new_services and update_user:
             new_service = request.env['services'].sudo().create(new_services)
             update_user.write({'job': 'owner'})
