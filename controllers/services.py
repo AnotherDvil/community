@@ -90,7 +90,6 @@ class Services(http.Controller):
             'owner': kwargs.get('owner'),
             'description': kwargs.get('description')
         }
-        
         update_user = request.env['res.partner'].sudo().search([('id', '=', new_services['owner']), ('job', '!=', 'owner')], limit=1)
         if new_services and update_user:
             new_service = request.env['services'].sudo().create(new_services)

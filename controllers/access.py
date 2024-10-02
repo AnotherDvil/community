@@ -68,7 +68,7 @@ class CommunityLogin(http.Controller):
             # Generar un token único para el usuario
             token = secrets.token_urlsafe(20)
 
-            if user_type == 'user':  # Si el tipo de usuario es 'usuario'
+            if user_type:  # Si el tipo de usuario es 'usuario'
                 usuario = request.env['res.partner'].sudo().create({
                     'name': name,
                     'email': email,
