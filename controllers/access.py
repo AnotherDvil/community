@@ -10,7 +10,7 @@ class CommunityLogin(http.Controller):
         email = kwargs.get('email')
         password = kwargs.get('password')
         # Buscar contacto por correo electrónico y contraseña
-        partner = request.env['res.partner'].sudo().search([('email', '=', email), ('password', '=', password)], limit=1)
+        partner = request.env['res.partner'].sudo().search([('email', '=', email)], limit=1)
         if partner:
             token = secrets.token_urlsafe(20)
             partner.sudo().write({'token': token})
