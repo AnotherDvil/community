@@ -19,7 +19,8 @@ class CommunityLogin(http.Controller):
                 'id': partner.id,
                 'name': partner.name,
                 'email': partner.email,
-                'token': partner.token
+                'token': partner.token,
+                'rol': partner.user_type
             }
         else:
             response = {
