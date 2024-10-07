@@ -12,14 +12,14 @@ class CommunityLogin(http.Controller):
         # Buscar contacto por correo electrónico y contraseña
         partner = request.env['res.partner'].sudo().search([('email', '=', email)], limit=1)
         if partner:
-            token = secrets.token_urlsafe(20)
+            #token = secrets.token_urlsafe(20)
             partner.sudo().write({'token': token})
             response = {
                 'status': True,
                 'id': partner.id,
                 'name': partner.name,
                 'email': partner.email,
-                'token': token
+                'token': partner.token
             }
         else:
             response = {
