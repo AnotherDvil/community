@@ -13,7 +13,7 @@ class CommunityLogin(http.Controller):
         partner = request.env['res.partner'].sudo().search([('email', '=', email)], limit=1)
         if partner:
             #token = secrets.token_urlsafe(20)
-            partner.sudo().write({'token': token})
+            #partner.sudo().write({'token': token})
             response = {
                 'status': True,
                 'id': partner.id,
