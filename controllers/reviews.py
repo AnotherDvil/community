@@ -32,11 +32,13 @@ class Reviews(http.Controller):
 
     @http.route('/reviews/create', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
     def create_reviews(self, **kwargs):
+        token = kwargs.get('written_by')
+        busqueda = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
         new_review = {
             'name': kwargs.get('name'),
             'description': kwargs.get('description'),
             'rating': kwargs.get('rating'),
-            'written_by': kwargs.get('written_by'),
+            'written_by': busqueda.id,
             'service_id': kwargs.get('service_id')
         }
         print(new_review)
@@ -52,4 +54,4 @@ class Reviews(http.Controller):
                 'success': True,
                 'Message': 'La reseña NO se creó con exito',
             }
-        return json.dumps(response)
+        return response
