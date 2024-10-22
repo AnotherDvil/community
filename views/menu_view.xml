@@ -7,12 +7,24 @@
       <field name="view_mode">kanban,tree,form</field>
     </record>
 
+    <!-- Acción para los usuarios -->
     <record id="open_view_res_partner_list" model="ir.actions.act_window">
       <field name="name">Usuarios</field>
       <field name="res_model">res.partner</field>
       <field name="view_mode">kanban,tree,form,activity</field>
       <field name="domain">[]</field>
       <field name="view_id" eval="False"/>
+    </record>
+
+    <record id="proposals_action" model="ir.actions.act_window">
+      <field name="name">Propuestas</field>
+      <field name="res_model">proposals</field>
+      <field name="view_mode">tree,form</field>
+      <field name="help" type="html">
+        <p class="oe_view_nocontent_create">
+            No hay propuestas. Haga click para crear una.
+        </p>    
+      </field>
     </record>
 
     <!-- actions -->
@@ -34,5 +46,13 @@
       parent="community_menu"
       action="open_view_res_partner_list"
       sequence="3"/>
+
+    <menuitem
+      id="community_proposals"
+      name="Propuestas"
+      parent="community_menu"
+      action="proposals_action"
+      sequence="4"/>
+
   </data>
 </odoo>

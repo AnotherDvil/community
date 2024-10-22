@@ -97,7 +97,7 @@
                                     <field name="create_date" string="Fecha de creación"/>
                                     <field name="close_date" />
                                     <field name="__last_update" string="Ultima modificación"/>
-                                    <field name="phase" />
+                                    <!-- <field name="phase" /> -->
                                     <field name="comments" />
                                     <field name="status" widget="badge" decoration-warning="status == 'draft'" decoration-success="status == 'complete'"/>
                                 </tree>
@@ -120,7 +120,7 @@
                                     <field name="create_date" />
                                     <field name="name"/>
                                     <field name="description"/>
-                                    <field name="rating" widget="priority"/>
+                                    <field name="rating"/>
                                     <field name="written_by" />
                                 </tree>
                             </field>

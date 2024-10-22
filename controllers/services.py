@@ -54,6 +54,7 @@ class Services(http.Controller):
         services = request.env['services'].sudo().search([('id', '=', id_service), ('name', '!=', False), ('archived', '=', False)])
         novedades = request.env['news'].sudo().search([('service_id', '=', id_service), ('name', '!=', False)])
         unidades = []  # Inicializar la lista vacía antes de la verificación
+        
         if services.exists():
             for service in services:
                 novedades_list = [] # Crea una lista para almacenar las novedades

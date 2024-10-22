@@ -11,12 +11,13 @@ class reviews(models.Model):
     
     name = fields.Char("Titulo")
     description = fields.Char("Descripción")
-    rating = fields.Selection([
+    rating = fields.Float("Calificación")
+    """ rating = fields.Selection([
         ('0', '0 Stars'),
         ('1', '1 Star'),
         ('2', '2 Stars'),
         ('3', '3 Stars')
-    ], string="Calificación")
+    ], string="Calificación") """
     written_by = fields.Many2one('res.partner', string="Redactado por", readonly=True)
     service_id = fields.Many2one('services', 'Servicios')
     

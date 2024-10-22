@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="proposals_view_tree" model="ir.ui.view">
+        <field name="name">proposals.view.tree</field>
+        <field name="model">proposals</field>
+        <field name="arch" type="xml">
+            <tree string="Propuestas">
+                <field name="name" />
+                <field name="description" />
+                <field name="written_by" />
+                <field name="status" widget="badge" 
+                    decoration-danger="status == 'draft'" decoration-warning="status == 'deliver'" 
+                    decoration-info="status == 'vote'" decoration-success="status == 'complete'"
+                />
+                <!-- <field name="phase" /> -->
+            </tree>
+        </field>
+    </record>
+
+    <record id="proposals_view_form" model="ir.ui.view">
+        <field name="name">proposals.view.form</field>
+        <field name="model">proposals</field>
+        <field name="arch" type="xml">
+            <form string="Propuestas">
+                <header>
+                    <field name="status" widget="statusbar" options="{'clickable':1}"/>
+                    <button name="obtain_results" string="Obtener resultados" type="object" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1 class="d-flex flex-row">
+                            <field name="name" placeholder="Nombre de la propuesta" required="True" style="font-size: min(4vw, 2.6rem);"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="written_by"/>
+                            <field name="status"/>
+                            <!-- <field name="phase" /> -->
+                        </group>
+                        <group>
+                            <field name="service_id" readonly='true' string="Servicio relacionado"/>
+                            <field name="description" />
+                            <field name="close_date" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="comments" string="Comentarios" attrs="{'invisible': [('status', '!=', 'debate'), ('status', '!=', 'complete')]}">
+                            <field name="comments">
+                                <tree editable="bottom">
+                                    <!-- <field name="proposals_id" readonly='true' string="Propuesta relacionada"/> -->
+                                    <field name="name"/>
+                                    <field name="written_by"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <page name="vote" string="Votación" attrs="{'invisible': [('status', '!=', 'deliver'), ('status', '!=', 'complete')]}">
+                            <field name="vote">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="written_by"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <page name="complete" string="Resultados" attrs="{'invisible': [('status', '!=', 'complete')]}">
+                            <group>
+                                <field name="result" />
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+</odoo>
