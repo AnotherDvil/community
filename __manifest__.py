@@ -20,7 +20,7 @@
     """,
     'author': "Nexus Technologies",
     'category': 'Services',
-    'version': '0.6',
+    'version': '1.6',
     'depends': [
         'base',
         'mail',
@@ -28,12 +28,12 @@
     ],
     # always loaded
     'data': [
+        'views/view_res_partner.xml',
+        'views/menu_view.xml',
+        'views/view_services.xml',
+        'views/proposals_view.xml',
         'security/community_security.xml',
         'security/ir.model.access.csv',
         'data/obtain_results_prop.xml',
-        'views/menu_view.xml',
-        'views/view_res_partner.xml',
-        'views/view_services.xml',
-        'views/proposals_view.xml',
     ]
 }

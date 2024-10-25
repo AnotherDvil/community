@@ -33,6 +33,7 @@ class Reviews(http.Controller):
     @http.route('/reviews/create', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
     def create_reviews(self, **kwargs):
         token = kwargs.get('written_by')
+        print("Token: ",token)
         busqueda = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
         new_review = {
             'name': kwargs.get('name'),

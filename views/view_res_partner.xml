@@ -6,6 +6,7 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
+
                 <xpath expr="//page[@name='internal_notes']" position="after">
                     <page name="access_page" string="Datos Community">
                         <group>
@@ -15,11 +16,14 @@
                                 <field name="archived" />
                                 <field name="job" />
                                 <field name="phone" />
-                                <field name="service_id_e" attrs="{'invisible': [('job', '!=', 'employee')]}"/>
+                                <field name="service_id_e" string="Servicio trabajador" attrs="{'invisible': [('job', '!=', 'employee')]}"/>
+                                <field name="service_id_f" string="Servicios seguidos"/>
+                                <field name="service_owner" string="Dueño del servicio" attrs="{'invisible': [('job', '!=', 'owner')]}"/>
                             </group>
 
                             <group string="Acceso">
                                 <field name="token" />
+                                <button name="get_owner" string="Prueba" type="object" class="oe_highlight"/>
                             </group>
                         </group>
                     </page>

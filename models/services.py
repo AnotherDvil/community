@@ -43,9 +43,13 @@ class services(models.Model):
         # Generar access_code automáticamente si no se ha proporcionado
         if 'access_code' not in vals or not vals['access_code']:
             vals['access_code'] = self.generate_access_code()
-        
-        # Llamar al método create original con los valores actualizados
-        return super(services, self).create(vals)
+        # Crear el servicio utilizando el método original con los valores actualizados
+        record = super(services, self).create(vals)
+        # Actualizar el campo 'service_owner' en el modelo 'res.partner' si hay un dueño
+        if record.owner:
+            partner = self.env['res.partner'].browse(record.owner.id)
+            partner.get_owner()  # Llama a la función get_owner para actualizar el campo 'service_owner'
+        return record
 
     def generate_access_code(self):
         characters = string.ascii_letters + string.digits
