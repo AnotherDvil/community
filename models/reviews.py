@@ -18,10 +18,10 @@ class reviews(models.Model):
         ('2', '2 Stars'),
         ('3', '3 Stars')
     ], string="Calificación") """
-    written_by = fields.Many2one('res.partner', string="Redactado por", readonly=True)
+    written_by = fields.Many2one('res.partner', string="Redactado por")
     service_id = fields.Many2one('services', 'Servicios')
     
-    @api.model
+    """ @api.model
     def create(self, vals):
         # Obtener el usuario actual
         user = self.env.user
@@ -37,4 +37,4 @@ class reviews(models.Model):
         else:
             _logger.warning(f"No se encontró un res.partner para el usuario {user.name} (ID: {user.id})")
         
-        return super(reviews, self).create(vals)
+        return super(reviews, self).create(vals) """

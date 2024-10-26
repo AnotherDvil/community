@@ -33,8 +33,12 @@ class Reviews(http.Controller):
     @http.route('/reviews/create', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
     def create_reviews(self, **kwargs):
         token = kwargs.get('written_by')
-        print("Token: ",token)
         busqueda = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
+        if not busqueda:
+            return {
+                'success': False,
+                'Message': 'El usuario no fue encontrado con el token proporcionado',
+            }
         new_review = {
             'name': kwargs.get('name'),
             'description': kwargs.get('description'),
@@ -42,7 +46,6 @@ class Reviews(http.Controller):
             'written_by': busqueda.id,
             'service_id': kwargs.get('service_id')
         }
-        print(new_review)
         request_review = request.env['reviews'].sudo().create(new_review)
         if request_review:
             response = {
