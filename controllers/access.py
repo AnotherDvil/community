@@ -8,7 +8,7 @@ class CommunityLogin(http.Controller):
     @http.route('/login', type='json', auth='none', methods=['POST'], csrf=False, cors='*')
     def login(self, **kwargs):
         email = kwargs.get('email')
-        password = kwargs.get('password')
+        # password = kwargs.get('password')
         # Buscar contacto por correo electrónico y contraseña
         partner = request.env['res.partner'].sudo().search([('email', '=', email)], limit=1)
         if partner:
@@ -26,13 +26,17 @@ class CommunityLogin(http.Controller):
                 'token': token,
                 'rol': partner.job
             }
+
+            if partner.job == 'owner':
+                service_id = partner.service_owner.id
+                response['owner_service'] = service_id
         else:
             response = {
                 'status': False,
                 'message': 'Credenciales invalidas'
             }
         return response
-
+ 
     @http.route('/validate_email', type='json', auth='none', methods=['POST'], csrf=False, cors='*')
     def validate_email(self, **kwargs):
         email = kwargs.get('email')

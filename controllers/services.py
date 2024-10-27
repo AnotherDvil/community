@@ -106,7 +106,7 @@ class Services(http.Controller):
                 'message': 'No se pudo crear el servicio'
             }
         json_response = json.dumps(response)
-        return json_response
+        return response
 
     @http.route('/services/delete/<int:id_service>', type="http", auth='public', methods=['DELETE'], csrf=False, cors='*')
     def delete_service(self, id_service, **kwargs):
