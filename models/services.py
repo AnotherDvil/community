@@ -37,6 +37,23 @@ class services(models.Model):
         ('creative_services', 'Servicios creativos'),
         ('maintenance', 'Servicios de mantenimiento'),
     ], string='Categoría', tracking=True)
+    
+    #Conexión con otros modelos
+    novedades = fields.One2many('news', 'service_id', string="Novedades")
+    empleados = fields.One2many('res.partner', 'service_id_e', string="Empleados")
+    rewards = fields.One2many('rewards', 'service_id', string="Recompensas")
+
+    followers = fields.Many2many(
+        'res.partner',                # Modelo relacionado
+        'service_partner_rel',         # Nombre de la tabla de relación
+        'service_id',                  # Columna que hace referencia a este modelo (`services`)
+        'partner_id',                  # Columna que hace referencia a `res.partner`
+        string="Seguidores"            # Etiqueta del campo
+    )
+
+
+    reviews = fields.One2many('reviews', 'service_id', string='Reseñas')
+    proposals = fields.One2many('proposals', 'service_id', string="Propuestas")
 
     @api.model
     def create(self, vals):
@@ -60,11 +77,3 @@ class services(models.Model):
         services = self.search([])
         for service in services:
             service.access_code = self.generate_access_code()
-    
-    #Conexión con otros modelos
-    novedades = fields.One2many('news', 'service_id', string="Novedades")
-    empleados = fields.One2many('res.partner', 'service_id_e', string="Empleados")
-    rewards = fields.One2many('rewards', 'service_id', string="Recompensas")
-    followers = fields.Many2many('res.partner', 'service_id_f', string="Seguidores")
-    reviews = fields.One2many('reviews', 'service_id', string='Reseñas')
-    proposals = fields.One2many('proposals', 'service_id', string="Propuestas")

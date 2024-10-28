@@ -14,8 +14,21 @@ class Contacts(models.Model):
         ('owner', 'Dueño')
     ], string='Tipo de usuario', default="user")
 
+    #Empleado
     service_id_e = fields.Many2one('services', string='Servicio inscrito')
-    service_id_f = fields.Many2one('services', string="Servicio")
+    service_id_f = fields.Many2one('services', string='Servicio inscrito')
+
+
+    #Seguidores
+    followed_services = fields.Many2many(
+        'services',
+        'service_partner_rel',
+        'partner_id',
+        'service_id',
+        string="Servicios Seguidos"
+    )
+
+    #Propietario del servicio
     service_owner = fields.Many2one('services', string='Servicio del dueño', compute='get_owner')
 
     @api.model

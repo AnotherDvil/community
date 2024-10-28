@@ -17,7 +17,6 @@
                                 <field name="job" />
                                 <field name="phone" />
                                 <field name="service_id_e" string="Servicio trabajador" attrs="{'invisible': [('job', '!=', 'employee')]}"/>
-                                <field name="service_id_f" string="Servicios seguidos"/>
                                 <field name="service_owner" string="Dueño del servicio" attrs="{'invisible': [('job', '!=', 'owner')]}"/>
                             </group>
 
@@ -26,6 +25,14 @@
                                 <button name="get_owner" string="Prueba" type="object" class="oe_highlight"/>
                             </group>
                         </group>
+                    </page>
+                    <page name="seguidos_page" string="Seguidos">
+                        <field name="followed_services">
+                            <tree editable="bottom">
+                                <field name="name" />
+                                <field name="direction" />
+                            </tree>
+                        </field>
                     </page>
                 </xpath>
             </field>
