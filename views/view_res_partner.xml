@@ -30,6 +30,8 @@
                         <field name="followed_services">
                             <tree editable="bottom">
                                 <field name="name" />
+                                <field name="description" />
+                                <!-- <field name="image_1920" /> -->
                                 <field name="direction" />
                             </tree>
                         </field>

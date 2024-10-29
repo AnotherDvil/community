@@ -3,6 +3,7 @@
 import json
 from odoo import http
 from odoo.http import request, Response
+import base64
 
 class Followers(http.Controller):
     # Controlador para obtener los seguidores del servicio
@@ -37,10 +38,16 @@ class Followers(http.Controller):
 
         if followed.exists():
             for service in followed.followed_services:
+                # Obtener el registro completo del servicio en caso de que solo tengamos su ID
+                service_data = request.env['services'].sudo().search([('id', '=', service.id)], limit=1)
+
                 followed_list.append({
-                    'id': service.id,
-                    'name': service.name,
-                    'direction': service.direction
+                    'id': service_data.id,
+                    'name': service_data.name,
+                    'direction': service_data.direction,
+                    'description': service_data.description,
+                    'qualification': service_data.qualification,
+                    'image': base64.b64encode(service_data.image).decode() if service_data.image else False
                 })
         else:
             followed_list.append({
