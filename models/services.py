@@ -77,3 +77,13 @@ class services(models.Model):
         services = self.search([])
         for service in services:
             service.access_code = self.generate_access_code()
+
+    @api.depends('reviews')
+    @api.onchange('reviews')
+    def get_average(self):
+        for record in self:
+            ratings = record.reviews.mapped('rating')
+            if ratings:
+                record.qualification = sum(ratings) / len(ratings)
+            else:
+                record.qualification = 0.0

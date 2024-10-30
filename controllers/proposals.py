@@ -76,21 +76,24 @@ class Proposals(http.Controller):
                     'status': status_dict.get(prop.status, prop.status),
                     'description': prop.description,
                     'close_date': prop.close_date.strftime('%Y-%m-%d') if prop.close_date else None,
+                    'close_date_debate': prop.close_date_debate.strftime('%Y-%m-%d') if prop.close_date_debate else None,
+                    'close_date_deliver': prop.close_date_deliver.strftime('%Y-%m-%d') if prop.close_date_deliver else None,
                     'result': result_dict.get(prop.result, prop.result),
                     'service_related': prop.service_id.id
                 }
 
                 # Condiciones según el estado de la propuesta
-                # Añadir datos específicos según el estado
                 if prop.status == 'debate':
                     proposal_data['comments'] = comments_list
+
                 elif prop.status == 'deliver':
                     proposal_data['votes'] = votes_list
+
                 elif prop.status == 'complete':
                     proposal_data['votes'] = votes_list
                     proposal_data['comments'] = comments_list
 
-                # Agregar la propuesta a la lista final
+                # Agrega la propuesta a la lista final
                 unidades.append(proposal_data)
 
         else:

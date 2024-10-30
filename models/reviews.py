@@ -20,7 +20,7 @@ class reviews(models.Model):
     ], string="Calificación") """
     written_by = fields.Many2one('res.partner', string="Redactado por")
     service_id = fields.Many2one('services', 'Servicios')
-    
+
     """ @api.model
     def create(self, vals):
         # Obtener el usuario actual
