@@ -24,6 +24,7 @@
             <form string="Propuestas">
                 <header>
                     <field name="status" widget="statusbar" options="{'clickable':1}"/>
+                    <button string="Cambiar fase" name="change_phase" type="object" class="oe_highlight"/>
                     <button name="obtain_results" string="Obtener resultados" type="object" class="oe_highlight"/>
                 </header>
                 <sheet>
@@ -39,9 +40,11 @@
                             <!-- <field name="phase" /> -->
                         </group>
                         <group>
-                            <field name="service_id" readonly='true' string="Servicio relacionado"/>
+                            <field name="service_id" string="Servicio relacionado"/>
                             <field name="description" />
-                            <field name="close_date" />
+                            <field name="close_date_debate" attrs="{'invisible': [('status', '!=', 'draft'), ('status', '!=', 'debate'), ('status', '!=', 'complete')]}"/>
+                            <field name="close_date_deliver" attrs="{'invisible': [('status', '!=', 'draft'), ('status', '!=', 'deliver'), ('status', '!=', 'complete')]}"/>
+                            <field name="close_date"/>
                         </group>
                     </group>
                     <notebook>

@@ -16,12 +16,16 @@ class proposals(models.Model):
             ('deliver', 'Deliberación'), 
             ('complete', 'Completo'),
         ], default='draft', string="Estado")
-    close_date = fields.Datetime('Fecha de cierre', tracking=True)
     result = fields.Selection([
         ('denied', 'Denegado'),
         ('progress', 'En progreso'),
         ('accepted', 'Aceptado')
     ], default='progress', string="Resultado")
+
+    close_date_debate = fields.Datetime('Fecha de cierre de la fase debate', tracking=True)
+    close_date_deliver = fields.Datetime('Fecha de cierre de la fase deliberación', tracking=True)
+    close_date = fields.Datetime('Fecha de cierre de la propuesta', tracking=True)
+
 
     #Conexión con otros modelos
     service_id = fields.Many2one('services', 'Servicios')
@@ -45,12 +49,24 @@ class proposals(models.Model):
         vals['written_by'] = employee.id if employee else False
         return super(proposals, self).create(vals)
 
+    def change_phase(self):
+        today = datetime.today()
+        print("Hoy es: ",today)
+        for record in self:
+            margin = timedelta(minutes=5)
+            if record.close_date_debate:
+                if abs(today - record.close_date_debate) <= margin:
+                    record.status = 'deliver'
+            elif record.close_date_debate and record.close_date_deliver:
+                if abs(today - record.close_date_deliver) <= margin:
+                    record.status = 'complete'
+
     def obtain_results(self):
         today = datetime.today()
         print("Hoy es: ",today)
         for record in self:
             if record.close_date:
-                margin = timedelta(minutes=30) # Margen de tiempo, es decir, considera 30 mn antes o despues
+                margin = timedelta(minutes=10) # Margen de tiempo, es decir, considera 30 mn antes o despues
 
                 # Varificados que hoy está dentro del margen de la fecha de cierre
                 if abs(today - record.close_date) <= margin:
@@ -93,7 +109,7 @@ class proposals(models.Model):
         proposals = self.env['proposals'].search([('name', '!=', False)])
         for record in proposals:
             if record.close_date:
-                margin = timedelta(minutes=30) # Margen de tiempo, es decir, considera 30 mn antes o despues
+                margin = timedelta(minutes=10) # Margen de tiempo, es decir, considera 30 mn antes o despues
 
                 # Varificados que hoy está dentro del margen de la fecha de cierre
                 if abs(today - record.close_date) <= margin:
