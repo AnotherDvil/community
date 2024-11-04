@@ -48,9 +48,13 @@ class Reviews(http.Controller):
         }
         request_review = request.env['reviews'].sudo().create(new_review)
         if request_review:
+            # Actualiza la calificación promedio
+            service = request.env['services'].sudo().browse(new_review['service_id'])
+            service.get_average()
+
             response = {
                 'success': True,
-                'Message': 'La reseña se creó con exito',
+                'Message': 'La reseña se creó con éxito',
                 'id': request_review.id
             }
         else:

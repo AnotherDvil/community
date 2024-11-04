@@ -40,7 +40,6 @@ class services(models.Model):
     
     #Conexión con otros modelos
     novedades = fields.One2many('news', 'service_id', string="Novedades")
-    empleados = fields.One2many('res.partner', 'service_id_e', string="Empleados")
     rewards = fields.One2many('rewards', 'service_id', string="Recompensas")
 
     followers = fields.Many2many(
@@ -51,7 +50,12 @@ class services(models.Model):
         string="Seguidores"            # Etiqueta del campo
     )
 
-
+    empleados = fields.One2many(
+        'res.partner',
+        'service_id_e',
+        string="Empleados"
+    )
+    
     reviews = fields.One2many('reviews', 'service_id', string='Reseñas')
     proposals = fields.One2many('proposals', 'service_id', string="Propuestas")
 
@@ -78,7 +82,7 @@ class services(models.Model):
         for service in services:
             service.access_code = self.generate_access_code()
 
-    @api.depends('reviews')
+    @api.depends('reviews.rating')
     @api.onchange('reviews')
     def get_average(self):
         for record in self:

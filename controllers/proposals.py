@@ -102,3 +102,100 @@ class Proposals(http.Controller):
             })
 
         return json.dumps(unidades)
+
+    @http.route('/proposals/create', type="json", auth='none', methods=['POST'], csrf=False, cors='*')
+    def create_proposals(self, **kwargs):
+        token = kwargs.get('token')
+        update_user = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
+        new_proposals = {
+            'name': kwargs.get('name'),
+            'status': 'debate',
+            'description': kwargs.get('description'),
+            'service_id': kwargs.get('service_id'),
+            'written_by': update_user.id
+        }
+
+        if new_proposals and update_user:
+            new_proposal = request.env['proposals'].sudo().create(new_proposals)
+            response = {
+                'success': True,
+                'message': 'La propuesta se creo con exito',
+                'id': new_proposal.id
+            }
+        else:
+            response = {
+                'success': False,
+                'message': 'No se pudo crear la propuesta'
+            }
+        json_response = json.dumps(response)
+        return response
+
+    @http.route('/comment/<int:id_proposal>', type="json", auth='none', methods=['POST'], csrf=False, cors='*')
+    def create_comment(self, id_proposal, **kwargs):
+        proposal = request.env['proposals'].sudo().search([('id', '=', id_proposal)], limit=1)
+
+        if proposal.status == 'debate':
+            token = kwargs.get('token')
+            update_user = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
+
+            new_comment = {
+                'name': kwargs.get('name'),
+                'written_by': update_user.id,
+                'proposals_id': id_proposal
+            }
+
+            if update_user and new_comment:
+                comment_up = request.env['comments'].sudo().create(new_comment)
+                response = {
+                    'success': True,
+                    'message': 'El comentario se creó con exito',
+                    'id': comment_up.id
+                }
+            else:
+                response = {
+                    'success': False,
+                    'message': 'No se pudo crear el comentario'
+                }
+            return response
+        else:
+            response = {
+                'success': False,
+                'message': 'No se pudo crear el comentario'
+            }
+
+            return response
+
+    @http.route('/vote/<int:id_proposal>', type="json", auth='none', methods=['POST'], csrf=False, cors='*')
+    def create_vote(self, id_proposal, **kwargs):
+        proposal = request.env['proposals'].sudo().search([('id', '=', id_proposal)], limit=1)
+
+        if proposal.status == 'deliver':
+            token = kwargs.get('token')
+            update_user = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
+
+            new_vote = {
+                'name': kwargs.get('name'),
+                'written_by': update_user.id,
+                'proposals_id': id_proposal
+            }
+
+            if update_user and new_vote:
+                vote_up = request.env['vote'].sudo().create(new_vote)
+                response = {
+                    'success': True,
+                    'message': 'El voto se creó con exito',
+                    'id': vote_up.id
+                }
+            else:
+                response = {
+                    'success': False,
+                    'message': 'No se pudo crear el voto'
+                }
+            return response
+        else:
+            response = {
+                'success': False,
+                'message': 'No se pudo crear el voto'
+            }
+
+            return response

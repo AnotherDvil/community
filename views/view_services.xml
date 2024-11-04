@@ -128,7 +128,7 @@
 
                         <page string="Seguidores">
                             <field name="followers">
-                                <tree >
+                                <tree>
                                     <field name="name" string="Nombre del seguidor" />
                                     <field name="email" string="Correo del seguidor"/>
                                 </tree>
