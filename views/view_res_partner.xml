@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
+    <data>
         <record id="inherit_view_res_partner_community" model="ir.ui.view">
             <field name="name">res_partner_community.view.form.inherit</field>
             <field name="model">res.partner</field>
@@ -33,8 +33,44 @@
                                 <field name="description" />
                                 <!-- <field name="image_1920" /> -->
                                 <field name="direction" />
+                                <field name="rewards" />
                             </tree>
                         </field>
+                    </page>
+
+                    <page string="Recompensas">
+                        <!-- Mostrar saldo de puntos -->
+                        <group>
+                            <field name="moneda"/>
+                        </group>
+
+                        <group string="Recompensas disponibles">
+                            <field name="followed_rewards">
+                                <tree editable="bottom">
+                                    <field name="name" />
+                                    <field name="description" />
+                                    <field name="points_required" />
+                                    <field name="active" />
+                                </tree>
+                            </field>
+                        </group>
+
+                        <group string="Recompensas canjeadas">
+                            <field name="redeemed_rewards" widget="many2many_tree">
+                                <tree editable="bottom">
+                                    <field name="name" string="Recompensa"/>
+                                    <field name="description" string="Descripción"/>
+                                    <field name="points_required" string="Puntos Necesarios"/>
+                                    <field name="active" string="Activo"/>
+                                </tree>
+                            </field>
+                        </group>
+
+                        <!-- Botón para canjear recompensa -->
+                        <button name="redeem_reward_action"
+                                type="object"
+                                string="Canjear Recompensa"
+                                class="oe_highlight"/>
                     </page>
                 </xpath>
             </field>

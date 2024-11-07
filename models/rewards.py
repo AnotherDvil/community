@@ -9,5 +9,6 @@ class rewards(models.Model):
     name = fields.Char('Nombre')
     description = fields.Char('Descripción de la recompensa')
     points_required = fields.Integer('Puntos requeridos')
+    active = fields.Boolean('Está activo?')
     
     service_id = fields.Many2one('services', 'Servicios')

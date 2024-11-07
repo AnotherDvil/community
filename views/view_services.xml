@@ -110,6 +110,7 @@
                                     <field name="name" />
                                     <field name="description" />
                                     <field name="points_required" />
+                                    <field name="active" />
                                 </tree>
                             </field>
                         </page>

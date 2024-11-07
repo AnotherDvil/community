@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions
+from odoo.exceptions import UserError
 import secrets
 import logging
 _logger = logging.getLogger(__name__)
@@ -15,11 +16,11 @@ class Contacts(models.Model):
         ('employee', 'Empleado'),
         ('owner', 'Dueño')
     ], string='Tipo de usuario', default="user")
+    moneda = fields.Integer('Puntos Community')
 
     #Empleado
     service_id_e = fields.Many2one('services', string='Servicio empleado')
     service_id_f = fields.Many2one('services', string='Servicio inscrito')
-
 
     #Seguidores
     followed_services = fields.Many2many(
@@ -29,17 +30,67 @@ class Contacts(models.Model):
         'service_id',
         string="Servicios Seguidos"
     )
-
     #Propietario del servicio
     service_owner = fields.Many2one('services', string='Servicio del dueño', compute='get_owner')
+
+    # Recompensas canjeadas
+    redeemed_rewards = fields.Many2many(
+        'rewards',
+        'reward_partner_rel',
+        'partner_id',
+        'reward_id',
+        string="Recompensas Canjeadas"
+    )
+
+    followed_rewards = fields.One2many('rewards', compute='_compute_followed_rewards', string="Recompensas de Servicios Seguidos")
+
+    @api.depends('followed_services', 'redeemed_rewards')
+    def _compute_followed_rewards(self):
+        for record in self:
+            # Obtener todas las recompensas de los servicios seguidos
+            all_rewards = record.followed_services.mapped('rewards')
+            # Filtrar recompensas que no están en las canjeadas
+            available_rewards = all_rewards - record.redeemed_rewards
+            record.followed_rewards = available_rewards
+
+    def redeem_reward(self, reward_id):
+        # Obtenemos el usuario y la recompensa que desea canjear
+        reward = self.env['rewards'].browse(reward_id)
+
+        # Validamos si el usuario ya ha canjeado esta recompensa específica
+        if reward in self.redeemed_rewards:
+            raise UserError("Esta recompensa ya ha sido canjeada.")
+
+        # Validamos que el usuario tenga suficientes monedas para canjear la recompensa
+        if self.moneda < reward.points_required:
+            raise UserError("No tienes suficientes puntos para canjear esta recompensa.")
+
+        # Descontamos las monedas requeridas
+        self.moneda -= reward.points_required
+
+        # Agregamos la recompensa a la lista de recompensas canjeadas
+        self.write({'redeemed_rewards': [(4, reward.id)]})
+
+    def redeem_reward_action(self):
+        self.ensure_one()
+
+        # Filtra solo las recompensas que el usuario aún no ha canjeado
+        available_rewards = self.followed_services.mapped('rewards').filtered(
+            lambda r: r not in self.redeemed_rewards
+        )
+        
+        if not available_rewards:
+            raise UserError("No hay recompensas disponibles para canjear.")
+
+        # Usar el primer reward_id en available_rewards que aún no haya sido canjeado
+        reward_id = available_rewards[0].id
+        result = self.redeem_reward(reward_id)
 
     @api.model
     def create(self, vals):
         record = super(Contacts, self).create(vals)
-
         token = secrets.token_urlsafe(20)
         record.token = token
-
         return record
 
     def get_owner(self):
