@@ -82,4 +82,31 @@ class Followers(http.Controller):
 
         return response
 
-        
+    @http.route('/follow/<int:id_service>', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
+    def follow_service(self, id_service, **kwargs):
+        token = kwargs.get('token')
+        follow = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
+        if follow:
+            service_to_follow = request.env['services'].sudo().browse(id_service)
+            if service_to_follow.exists():
+                # Agregar el servicio a la relación Many2many
+                follow.followed_services = [(4, service_to_follow.id)]   
+                # Responder confirmando la vinculación
+                response = {
+                    'success': True,
+                    'message': f'El servicio con ID {id_service} ha sido vinculado correctamente al usuario {follow.id}.'
+                }
+            else:
+                # Responder si el servicio no existe
+                response = {
+                    'success': False,
+                    'message': f'El servicio con ID {id_service} no existe.'
+                }
+        else:
+            # Responder en caso de no encontrar el usuario
+            response = {
+                'success': False,
+                'message': 'Usuario no encontrado o token inválido.'
+            }
+        return response
+            
