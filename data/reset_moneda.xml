@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ir_cron_reset_moneda" model="ir.cron" forcecreate="True">
+        <field name="name">Community: Resetear moneda</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+        <field name="numbercall">-1</field>
+        <field eval="False" name="doall" />
+        <field name="state">code</field>
+        <field name="code">model._cron_reset_moneda()</field>
+    </record>
+
+</odoo>

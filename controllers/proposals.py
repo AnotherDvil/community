@@ -88,6 +88,7 @@ class Proposals(http.Controller):
 
                 elif prop.status == 'deliver':
                     proposal_data['votes'] = votes_list
+                    proposal_data['comments'] = comments_list
 
                 elif prop.status == 'complete':
                     proposal_data['votes'] = votes_list

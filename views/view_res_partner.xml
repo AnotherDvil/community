@@ -41,7 +41,12 @@
                     <page string="Recompensas">
                         <!-- Mostrar saldo de puntos -->
                         <group>
-                            <field name="moneda"/>
+                            <group>
+                                <field name="moneda"/>
+                            </group>
+                            <group>
+                                <field name="last_processed_moneda" />
+                            </group>
                         </group>
 
                         <group string="Recompensas disponibles">

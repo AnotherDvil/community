@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, exceptions
+from datetime import datetime, date, time
 from odoo.exceptions import UserError
 import secrets
 import logging
@@ -16,20 +17,15 @@ class Contacts(models.Model):
         ('employee', 'Empleado'),
         ('owner', 'Dueño')
     ], string='Tipo de usuario', default="user")
-    moneda = fields.Integer('Puntos Community')
+    moneda = fields.Integer('Puntos Community', default=0)
+    last_processed_moneda = fields.Integer('Ultima act. Moneda', help="Veces que se ha actualizado el campo moneda", default=0)
 
     #Empleado
     service_id_e = fields.Many2one('services', string='Servicio empleado')
     service_id_f = fields.Many2one('services', string='Servicio inscrito')
 
     #Seguidores
-    followed_services = fields.Many2many(
-        'services',
-        'service_partner_rel',
-        'partner_id',
-        'service_id',
-        string="Servicios Seguidos"
-    )
+    followed_services = fields.Many2many('services','service_partner_rel','partner_id','service_id',string="Servicios Seguidos")
     #Propietario del servicio
     service_owner = fields.Many2one('services', string='Servicio del dueño', compute='get_owner')
 
@@ -43,6 +39,14 @@ class Contacts(models.Model):
     )
 
     followed_rewards = fields.One2many('rewards', compute='_compute_followed_rewards', string="Recompensas de Servicios Seguidos")
+
+    @api.depends('last_processed_moneda')
+    def _cron_reset_moneda(self):
+        today = datetime.today()
+        contacts = self.env['res.partner'].search([('name', '!=', False)])
+        for record in contacts:
+            if record.last_processed_moneda:
+                record.last_processed_moneda = 0
 
     @api.depends('followed_services', 'redeemed_rewards')
     def _compute_followed_rewards(self):
