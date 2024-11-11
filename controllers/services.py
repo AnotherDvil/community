@@ -21,17 +21,18 @@ class Services(http.Controller):
         json_object = json.dumps(unidades)
         return json_object
 
-    @http.route('/search_service/<int:id_user>', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
-    def search_service(self, id_user, **kwargs):
+    @http.route('/search_service', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
+    def search_service(self, **kwargs):
         access_code = kwargs.get('access_code')
+        token = kwargs.get('token')
         # Busca el servicio por el código de acceso
         service = request.env['services'].sudo().search([('access_code', '=', access_code)], limit=1)
         if service:
             # Busca el usuario por su ID
-            user = request.env['res.partner'].sudo().search([('id', '=', id_user)], limit=1)
+            user = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
             if user:
                 # Asocia el usuario con el servicio (empleado)
-                user.sudo().write({'service_id_e': service.id})
+                user.sudo().write({'service_id_e': service.id, 'job': 'employee', 'service_id_e': service.id})
                 response = {
                     'status': True,
                     'message': 'El usuario fue agregado al servicio como empleado.'

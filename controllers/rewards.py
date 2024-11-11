@@ -70,6 +70,25 @@ class Rewards(http.Controller):
 
 
     # Controladores para el negocio, con estos podrá crear y borrar una recompensa
+    @http.route('/rewards/get/<int:id_service>', type="http", auth="none", methods=['GET'], cors='*', csrf=False)
+    def get_rewards(self, id_service, **kwargs):
+        rewards = request.env['rewards'].sudo().search([('service_id', '=', id_service), ('active', '=', True)])
+        rewards_list = []
+
+        if rewards.exists():
+            for reward in rewards:
+                rewards_list.append({
+                    'id': reward.id,
+                    'name': reward.name,
+                    'description': reward.description,
+                    'points_required': reward.points_required
+                })
+        else:
+            rewards_list.append({
+                'message': 'No hay recompensas, crea una!'
+            })
+        return json.dumps(rewards_list)
+
     @http.route('/rewards/create', type="json", auth="none", methods=['POST'], cors='*', csrf=False)
     def create_reward(self, **kwargs):
         new_reward = {

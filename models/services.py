@@ -50,10 +50,12 @@ class services(models.Model):
         string="Seguidores"            # Etiqueta del campo
     )
 
-    empleados = fields.One2many(
-        'res.partner',
-        'service_id_e',
-        string="Empleados"
+    empleados = fields.Many2many(
+        'res.partner',                # Modelo relacionado
+        'service_employee_rel',       # Nombre de la tabla de relación para "employees"
+        'service_id',                 # Columna que hace referencia a este modelo (`services`)
+        'partner_id',                 # Columna que hace referencia a `res.partner`
+        string="Empleados"            # Etiqueta del campo
     )
     
     reviews = fields.One2many('reviews', 'service_id', string='Reseñas')
