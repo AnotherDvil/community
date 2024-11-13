@@ -73,6 +73,7 @@
                         <page string="Novedades">
                             <field name="novedades">
                                 <tree editable="bottom">
+                                    <field name="id" />
                                     <field name="name" />
                                     <field name="description" />
                                 </tree>

@@ -63,3 +63,21 @@ class Reviews(http.Controller):
                 'Message': 'La reseña NO se creó con exito',
             }
         return response
+
+    #falta un metodo para borrar
+    @http.route('/reviews/delete/<int:id_review>', type="json", auth="none", methods=['DELETE'], csrf=False, cors='*')
+    def delete_reviews(self, id_review, **kwargs):
+        reviews = request.env['reviews'].sudo().browse(id_review)
+        if not reviews.exists():
+            response = {
+                'success': False,
+                'message': 'No existe la reseña'
+            }
+        else:
+            reviews.unlink()
+            response = {
+                'success': True,
+                'message': 'Se borró la reseña'
+            }
+        json_response = json.dumps(response)
+        return json_response

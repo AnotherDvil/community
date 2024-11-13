@@ -109,4 +109,3 @@ class Followers(http.Controller):
                 'message': 'Usuario no encontrado o token inválido.'
             }
         return response
-            

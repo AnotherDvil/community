@@ -68,7 +68,6 @@ class Rewards(http.Controller):
             _logger.error(f"Error al canjear recompensa: {str(e)}")
             return {'error': 'Ocurrió un error al intentar canjear la recompensa.'}
 
-
     # Controladores para el negocio, con estos podrá crear y borrar una recompensa
     @http.route('/rewards/get/<int:id_service>', type="http", auth="none", methods=['GET'], cors='*', csrf=False)
     def get_rewards(self, id_service, **kwargs):

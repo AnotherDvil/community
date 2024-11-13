@@ -33,7 +33,6 @@ class Proposals(http.Controller):
         
         return json.dumps(proposals_list)
 
-
     # Controlador para obtener las propuestas del proyecto
     @http.route('/proposalsDetail/<int:id_proposal>', type="http", auth="none", methods=['GET'], csrf=False, cors='*')
     def get_proposalsDetail(self, id_proposal, **kwargs):
@@ -200,3 +199,21 @@ class Proposals(http.Controller):
             }
 
             return response
+
+    #borrar propuestas
+    @http.route('/proposals/delete/<int:id_proposal>', type="json", auth="none", methods=['DELETE'], csrf=False, cors='*')
+    def delete_proposals(self, id_proposal, **kwargs):
+        proposals = request.env['proposals'].sudo().browse(id_new)
+        if not proposals.exists():
+            response = {
+                'success': False,
+                'message': 'No existe la propuesta'
+            }
+        else:
+            proposals.unlink()
+            response = {
+                'success': True,
+                'message': 'Exito al borrar la propuesta'
+            }
+        json_response = json.dumps(response)
+        return json_response
