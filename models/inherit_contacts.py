@@ -19,26 +19,18 @@ class Contacts(models.Model):
     ], string='Tipo de usuario', default="user")
     moneda = fields.Integer('Puntos Community', default=0)
     last_processed_moneda = fields.Integer('Ultima act. Moneda', help="Veces que se ha actualizado el campo moneda", default=0)
-
     #Empleado
     service_id_e = fields.Many2one('services', string='Servicio empleado')
     service_id_f = fields.Many2one('services', string='Servicio inscrito')
-
     #Seguidores
     followed_services = fields.Many2many('services','service_partner_rel','partner_id','service_id',string="Servicios Seguidos")
     #Propietario del servicio
     service_owner = fields.Many2one('services', string='Servicio del dueño', compute='get_owner')
-
     # Recompensas canjeadas
-    redeemed_rewards = fields.Many2many(
-        'rewards',
-        'reward_partner_rel',
-        'partner_id',
-        'reward_id',
-        string="Recompensas Canjeadas"
-    )
-
+    redeemed_rewards = fields.Many2many('rewards', 'reward_partner_rel', 'partner_id', 'reward_id', string="Recompensas Canjeadas")
     followed_rewards = fields.One2many('rewards', compute='_compute_followed_rewards', string="Recompensas de Servicios Seguidos")
+    #Notificaciones
+    notifications = fields.One2many('notifications', 'name', string="Notificaciones")
 
     @api.depends('last_processed_moneda')
     def _cron_reset_moneda(self):

@@ -24,15 +24,15 @@ class reviews(models.Model):
 
     """ @api.model
     def create(self, vals):
-        # Obtener el usuario actual
+        # Obtenemos el usuario actual
         user = self.env.user
         _logger.info(f"Usuario actual: {user.name} (ID: {user.id})")
         
-        # Obtener el empleado correspondiente al usuario actual
+        # Obtenemos el empleado correspondiente al usuario actual
         employee = self.env['res.partner'].search([('user_id', '=', user.id)], limit=1)
         _logger.info(f"Empleado encontrado: {employee.name if employee else 'No encontrado'} (ID: {employee.id if employee else 'N/A'})")
         
-        # Establecer el campo written_by con el empleado correspondiente
+        # Establece el campo written_by con el empleado correspondiente
         if employee:
             vals['written_by'] = employee.id
         else:
@@ -40,12 +40,12 @@ class reviews(models.Model):
         
         return super(reviews, self).create(vals) """
 
-        # Lista de malas palabras a censurar
+    # Lista de malas palabras a censurar
     BAD_WORDS = ["tetas", "culo", "pito"]
 
     def censor_bad_words(self, text):
         for bad_word in self.BAD_WORDS:
-            # Usar regex para reemplazar cada mala palabra con asteriscos
+            # Usa regex para reemplazar cada mala palabra con asteriscos
             regex = re.compile(re.escape(bad_word), re.IGNORECASE)
             replacement = bad_word[0] + '*' * (len(bad_word) - 2) + bad_word[-1]
             text = regex.sub(replacement, text)
