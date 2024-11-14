@@ -19,12 +19,12 @@ class Proposals(http.Controller):
                 
                 proposals_list.append({
                     'id': prop.id,
-                    'create_date': prop.create_date.strftime('%Y-%m-%d') if prop.create_date else None,
+                    'create_date': prop.create_date.strftime('%Y-%m-%d %H:%M:%S') if prop.create_date else None,  # Incluye la hora en el formato
                     'name': prop.name,
                     'written_by': prop.written_by.name,
                     'status': status_dict.get(prop.status, prop.status),  # Convertir la clave al valor amigable
                     'description': prop.description,
-                    'close_date': prop.close_date.strftime('%Y-%m-%d') if prop.close_date else None
+                    'close_date': prop.close_date.strftime('%Y-%m-%d %H:%M:%S') if prop.close_date else None
                 })
         else:
             proposals_list.append({
@@ -69,14 +69,14 @@ class Proposals(http.Controller):
 
                 proposal_data = {
                     'id': prop.id,
-                    'create_date': prop.create_date.strftime('%Y-%m-%d') if prop.create_date else None,
+                    'create_date': prop.create_date.strftime('%Y-%m-%d %H:%M:%S') if prop.create_date else None,
                     'name': prop.name,
                     'written_by': prop.written_by.name,
                     'status': status_dict.get(prop.status, prop.status),
                     'description': prop.description,
-                    'close_date': prop.close_date.strftime('%Y-%m-%d') if prop.close_date else None,
-                    'close_date_debate': prop.close_date_debate.strftime('%Y-%m-%d') if prop.close_date_debate else None,
-                    'close_date_deliver': prop.close_date_deliver.strftime('%Y-%m-%d') if prop.close_date_deliver else None,
+                    'close_date': prop.close_date.strftime('%Y-%m-%d %H:%M:%S') if prop.close_date else None,
+                    'close_date_debate': prop.close_date_debate.strftime('%Y-%m-%d %H:%M:%S') if prop.close_date_debate else None,
+                    'close_date_deliver': prop.close_date_deliver.strftime('%Y-%m-%d %H:%M:%S') if prop.close_date_deliver else None,
                     'result': result_dict.get(prop.result, prop.result),
                     'service_related': prop.service_id.id
                 }
