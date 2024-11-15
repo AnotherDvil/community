@@ -150,3 +150,42 @@ class Services(http.Controller):
             }
         json_response = json.dumps(response)
         return json_response
+
+    @http.route('/searcher', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
+    def searcher(self, **kwargs):
+        content_input = kwargs.get('content_input')
+
+        # Convierte la entrada a minúsculas para evitar problemas de mayúsculas/minúsculas
+        search_term = content_input.strip().lower()
+        
+        # Busca servicios basados en múltiples campos
+        services = request.env['services'].sudo().search([
+            '|', '|', '|',
+            ('name', 'ilike', search_term),
+            ('owner.name', 'ilike', search_term),
+            ('direction', 'ilike', search_term),
+            ('access_code', 'ilike', search_term)
+        ])
+        
+        # Formatea los resultados
+        results = []
+        for service in services:
+            results.append({
+                'id': service.id,
+                'name': service.name,
+                'image': base64.b64encode(service.image).decode() if service.image else False,
+                'qualification': service.qualification,
+                'description': service.description
+            })
+        
+        if results:
+            return {
+                'success': True,
+                'message': f'Se encontraron {len(results)} servicios.',
+                'results': results
+            }
+        else:
+            return {
+                'success': False,
+                'message': 'No se encontraron servicios que coincidan con el término de búsqueda.'
+            }
