@@ -85,7 +85,8 @@ class Rewards(http.Controller):
                     'id': reward.id,
                     'name': reward.name,
                     'description': reward.description,
-                    'points_required': reward.points_required
+                    'points_required': reward.points_required,
+                    'image': base64.b64encode(reward.image).decode() if reward.image else False
                 })
         else:
             rewards_list.append({
