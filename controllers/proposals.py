@@ -105,8 +105,16 @@ class Proposals(http.Controller):
 
     @http.route('/proposals/create', type="json", auth='none', methods=['POST'], csrf=False, cors='*')
     def create_proposals(self, **kwargs):
-        token = kwargs.get('token')
+        token = kwargs.get('written_by')
         update_user = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
+        print(update_user)
+        if not update_user:
+            return {
+                'success': False,
+                'message': 'El usuario no fue encontrado con el token proporcionado'
+            }
+
+        # Crear la propuesta
         new_proposals = {
             'name': kwargs.get('name'),
             'status': 'debate',
@@ -115,11 +123,40 @@ class Proposals(http.Controller):
             'written_by': update_user.id
         }
 
-        if new_proposals and update_user:
+        if new_proposals:
             new_proposal = request.env['proposals'].sudo().create(new_proposals)
+
+            # Obtener el negocio relacionado
+            service = request.env['services'].sudo().browse(new_proposals['service_id'])
+
+            # Notificar a los seguidores y al dueño del negocio
+            if service:
+                followers = service.followers
+                notifications = []
+
+                for follower in followers:
+                    if follower.id != update_user.id:  # Excluir al usuario que creó la propuesta
+                        notifications.append({
+                            'name': follower.id,
+                            'message': f"Se ha creado una nueva propuesta en el negocio '{service.name}': {new_proposals['name']}.",
+                            'is_read': False
+                        })
+
+                # Agregar notificación para el dueño del negocio si aplica
+                if service.owner and service.owner.id != update_user.id:
+                    notifications.append({
+                        'name': service.owner.id,
+                        'message': f"Se ha creado una nueva propuesta en tu negocio '{service.name}': {new_proposals['name']}.",
+                        'is_read': False
+                    })
+
+                # Crear las notificaciones
+                if notifications:
+                    request.env['notifications'].sudo().create(notifications)
+
             response = {
                 'success': True,
-                'message': 'La propuesta se creo con exito',
+                'message': 'La propuesta se creó con éxito y se notificó a los seguidores y al dueño del negocio.',
                 'id': new_proposal.id
             }
         else:
@@ -127,7 +164,7 @@ class Proposals(http.Controller):
                 'success': False,
                 'message': 'No se pudo crear la propuesta'
             }
-        json_response = json.dumps(response)
+
         return response
 
     @http.route('/comment/<int:id_proposal>', type="json", auth='none', methods=['POST'], csrf=False, cors='*')

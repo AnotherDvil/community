@@ -52,6 +52,15 @@ class Reviews(http.Controller):
             service = request.env['services'].sudo().browse(new_review['service_id'])
             service.get_average()
 
+            # Enviar una notificación al dueño del negocio
+            if service.owner:
+                notification_data = {
+                    'name': service.owner.id,
+                    'message': f"{busqueda.name} ha creado una nueva reseña en tu negocio con una calificación de {new_review['rating']}.",
+                    'is_read': False
+                }
+                request.env['notifications'].sudo().create(notification_data)
+
             response = {
                 'success': True,
                 'Message': 'La reseña se creó con éxito',
