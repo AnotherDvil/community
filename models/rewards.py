@@ -10,5 +10,6 @@ class rewards(models.Model):
     description = fields.Char('Descripción de la recompensa')
     points_required = fields.Integer('Puntos requeridos')
     active = fields.Boolean('Está activo?')
+    image = fields.Binary('Imagen recompensa', readonly=False)
     
     service_id = fields.Many2one('services', 'Servicios')

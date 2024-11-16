@@ -14,6 +14,7 @@ class Rewards(http.Controller):
         reward_list = []
 
         if rewards.exists():
+
             for reward in rewards.followed_rewards:
                 if reward.active == True:
                     reward_list.append({
@@ -21,14 +22,18 @@ class Rewards(http.Controller):
                         'name': reward.name,
                         'description': reward.description,
                         'points_required': reward.points_required,
-                        'active': reward.active
+                        'active': reward.active,
+                        'image': base64.b64encode(reward.image).decode() if reward.image else False
                     })
         else:
             reward_list,append({
                 'message': 'No tienes recompensas activas, debes seguir a un negocio para obtener sus recompensas'
             })
 
-        return reward_list
+        return {
+            'community_points': rewards.moneda,
+            'data': reward_list,
+        }
 
     @http.route('/myRewards/redeem', type="json", auth='none', methods=['POST'], csrf=False, cors='*')
     def redeem_my_reward(self, **kwargs):
