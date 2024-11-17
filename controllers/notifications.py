@@ -19,7 +19,7 @@ class Notifications(http.Controller):
                 if notis.is_read == False:
                     noti_list.append({
                         'id': notis.id,
-                        'name': notis.message,
+                        'message': notis.message,
                     })
         else:
             noti_list,append({
