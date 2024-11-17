@@ -58,6 +58,18 @@ class Rewards(http.Controller):
             contact.moneda -= reward_to_redeem.points_required
             contact.redeemed_rewards = [(4, reward_to_redeem.id)]
             contact.followed_rewards = [(3, reward_to_redeem.id)]
+            
+            business_owner = reward_to_redeem.service_id.owner
+            if business_owner:
+                notification_message = (
+                    f"{contact.name} ha canjeado la recompensa '{reward_to_redeem.name}' "
+                    f"de tu servicio '{reward_to_redeem.service_id.name}'."
+                )
+                request.env['notifications'].sudo().create({
+                    'name': business_owner.id,
+                    'message': notification_message,
+                })
+
             return {
                 'success': True,
                 'message': 'Recompensa canjeada exitosamente.',
@@ -106,6 +118,24 @@ class Rewards(http.Controller):
 
         if new_reward:
             new_rewards = request.env['rewards'].sudo().create(new_reward)
+
+            service = request.env['services'].sudo().browse(kwargs.get('service_id'))
+            if service.exists():
+                # Identifica a los seguidores del servicio
+                followers = service.followers
+
+                # Crea notificaciones para cada seguidor
+                notifications = []
+                for follower in followers:
+                    notifications.append({
+                        'name': follower.id,
+                        'message': f"¡Nueva recompensa disponible! {new_rewards.name}: {new_rewards.description}",
+                    })
+
+                # Crea todas las notificaciones en un solo paso
+                if notifications:
+                    request.env['notifications'].sudo().create(notifications)
+
             response = {
                 'success': True,
                 'message': 'La recompensa se creó con exito',

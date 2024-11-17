@@ -126,23 +126,23 @@ class Proposals(http.Controller):
         if new_proposals:
             new_proposal = request.env['proposals'].sudo().create(new_proposals)
 
-            # Obtener el negocio relacionado
+            # Obtiene el negocio relacionado
             service = request.env['services'].sudo().browse(new_proposals['service_id'])
 
-            # Notificar a los seguidores y al dueño del negocio
+            # Notifica a los seguidores y al dueño del negocio
             if service:
                 followers = service.followers
                 notifications = []
 
                 for follower in followers:
-                    if follower.id != update_user.id:  # Excluir al usuario que creó la propuesta
+                    if follower.id != update_user.id:
                         notifications.append({
                             'name': follower.id,
                             'message': f"Se ha creado una nueva propuesta en el negocio '{service.name}': {new_proposals['name']}.",
                             'is_read': False
                         })
 
-                # Agregar notificación para el dueño del negocio si aplica
+                # Agrega notificación para el dueño del negocio si aplica
                 if service.owner and service.owner.id != update_user.id:
                     notifications.append({
                         'name': service.owner.id,
@@ -150,7 +150,7 @@ class Proposals(http.Controller):
                         'is_read': False
                     })
 
-                # Crear las notificaciones
+                # Crea las notificaciones
                 if notifications:
                     request.env['notifications'].sudo().create(notifications)
 
