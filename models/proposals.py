@@ -24,8 +24,6 @@ class proposals(models.Model):
 
     close_date_debate = fields.Datetime('Fecha de cierre de la fase debate', tracking=True)
     close_date_deliver = fields.Datetime('Fecha de cierre de la fase deliberación', tracking=True)
-    close_date = fields.Datetime('Fecha de cierre de la propuesta', tracking=True)
-
 
     #Conexión con otros modelos
     service_id = fields.Many2one('services', 'Servicios')
@@ -38,7 +36,7 @@ class proposals(models.Model):
     def draft_status(self):
         self.status = 'draft'
         
-    #Al momento de crear un registro se llenará el campo written_by con el nombre del usuario actual
+    """ #Al momento de crear un registro se llenará el campo written_by con el nombre del usuario actual
     @api.model
     def create(self, vals):
         # Obtener el usuario actual
@@ -47,7 +45,7 @@ class proposals(models.Model):
         employee = self.env['res.partner'].search([('user_id', '=', user.id)], limit=1)
         # Establecer el campo written_by con el empleado correspondiente
         vals['written_by'] = employee.id if employee else False
-        return super(proposals, self).create(vals)
+        return super(proposals, self).create(vals) """
 
     def change_phase(self):
         today = datetime.today()
@@ -65,11 +63,11 @@ class proposals(models.Model):
         today = datetime.today()
         print("Hoy es: ",today)
         for record in self:
-            if record.close_date:
+            if record.close_date_debate:
                 margin = timedelta(minutes=10) # Margen de tiempo, es decir, considera 30 mn antes o despues
 
                 # Varificados que hoy está dentro del margen de la fecha de cierre
-                if abs(today - record.close_date) <= margin:
+                if abs(today - record.close_date_debate) <= margin:
                     count_yes = 0
                     count_no = 0
                     count_meh = 0
@@ -108,11 +106,11 @@ class proposals(models.Model):
 
         proposals = self.env['proposals'].search([('name', '!=', False)])
         for record in proposals:
-            if record.close_date:
+            if record.close_date_debate:
                 margin = timedelta(minutes=10) # Margen de tiempo, es decir, considera 30 mn antes o despues
 
                 # Varificados que hoy está dentro del margen de la fecha de cierre
-                if abs(today - record.close_date) <= margin:
+                if abs(today - record.close_date_debate) <= margin:
                     count_yes = 0
                     count_no = 0
                     count_meh = 0

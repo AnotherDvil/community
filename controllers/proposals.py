@@ -2,11 +2,16 @@
 import json
 from odoo import http
 from odoo.http import request, Response
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
+from odoo.fields import Datetime
+from datetime import datetime
+from pytz import timezone
 
 class Proposals(http.Controller):
     # Controlador para obtener las propuestas del proyecto
     @http.route('/proposals/<int:id_service>', type="http", auth="none", methods=['GET'], csrf=False, cors='*')
     def get_proposals(self, id_service, **kwargs):
+        local_timezone = timezone('America/Mexico_City')
         # Solicitamos a la BDD
         proposals = request.env['proposals'].sudo().search([('service_id', '=', id_service)], order="create_date desc")
 
@@ -16,6 +21,12 @@ class Proposals(http.Controller):
             for prop in proposals:
                 # Diccionario para mapear las claves a sus etiquetas amigables
                 status_dict = dict(prop._fields['status'].selection)
+
+                # convierte las fechas al timezone local
+                close_date_deliver_local = Datetime.context_timestamp(prop, prop.close_date_deliver) if prop.close_date_deliver else None
+
+                if close_date_deliver_local:
+                    close_date_deliver_local = close_date_deliver_local.astimezone(local_timezone)
                 
                 proposals_list.append({
                     'id': prop.id,
@@ -24,7 +35,7 @@ class Proposals(http.Controller):
                     'written_by': prop.written_by.name,
                     'status': status_dict.get(prop.status, prop.status),  # Convertir la clave al valor amigable
                     'description': prop.description,
-                    'close_date': prop.close_date.strftime('%Y-%m-%d %H:%M:%S') if prop.close_date else None
+                    'close_date': close_date_deliver_local.strftime(DEFAULT_SERVER_DATETIME_FORMAT) if close_date_deliver_local else None,
                 })
         else:
             proposals_list.append({
@@ -36,7 +47,8 @@ class Proposals(http.Controller):
     # Controlador para obtener las propuestas del proyecto
     @http.route('/proposalsDetail/<int:id_proposal>', type="http", auth="none", methods=['GET'], csrf=False, cors='*')
     def get_proposalsDetail(self, id_proposal, **kwargs):
-        # Solicitudes a la base de datos
+        local_timezone = timezone('America/Mexico_City')
+
         proposals = request.env['proposals'].sudo().search([('id', '=', id_proposal), ('name', '!=', False)])
         comments = request.env['comments'].sudo().search([('proposals_id', '=', id_proposal), ('name', '!=', False)])
         votes = request.env['vote'].sudo().search([('proposals_id', '=', id_proposal), ('name', '!=', False)])
@@ -64,8 +76,17 @@ class Proposals(http.Controller):
                         vote_selection_dict = dict(vote._fields['name'].selection)
                         votes_list.append({
                             'postura': vote_selection_dict.get(vote.name, vote.name),
-                            'written_by': vote.written_by.name
+                            'written_by': vote.written_by.name if vote.written_by else False
                         })
+
+                # Convertir las fechas al timezone local
+                close_date_debate_local = Datetime.context_timestamp(prop, prop.close_date_debate) if prop.close_date_debate else None
+                close_date_deliver_local = Datetime.context_timestamp(prop, prop.close_date_deliver) if prop.close_date_deliver else None
+
+                if close_date_debate_local:
+                    close_date_debate_local = close_date_debate_local.astimezone(local_timezone)
+                if close_date_deliver_local:
+                    close_date_deliver_local = close_date_deliver_local.astimezone(local_timezone)
 
                 proposal_data = {
                     'id': prop.id,
@@ -74,9 +95,8 @@ class Proposals(http.Controller):
                     'written_by': prop.written_by.name,
                     'status': status_dict.get(prop.status, prop.status),
                     'description': prop.description,
-                    'close_date': prop.close_date.strftime('%Y-%m-%d %H:%M:%S') if prop.close_date else None,
-                    'close_date_debate': prop.close_date_debate.strftime('%Y-%m-%d %H:%M:%S') if prop.close_date_debate else None,
-                    'close_date_deliver': prop.close_date_deliver.strftime('%Y-%m-%d %H:%M:%S') if prop.close_date_deliver else None,
+                    'close_date_debate': close_date_debate_local.strftime(DEFAULT_SERVER_DATETIME_FORMAT) if close_date_debate_local else None,
+                    'close_date_deliver': close_date_deliver_local.strftime(DEFAULT_SERVER_DATETIME_FORMAT) if close_date_deliver_local else None,
                     'result': result_dict.get(prop.result, prop.result),
                     'service_related': prop.service_id.id
                 }

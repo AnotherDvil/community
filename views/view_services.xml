@@ -96,7 +96,7 @@
                                     <field name="description" />
                                     <field name="written_by" />
                                     <field name="create_date" string="Fecha de creación"/>
-                                    <field name="close_date" />
+                                    <field name="close_date_deliver" />
                                     <field name="__last_update" string="Ultima modificación"/>
                                     <!-- <field name="phase" /> -->
                                     <field name="comments" />

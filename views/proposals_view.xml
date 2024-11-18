@@ -42,13 +42,12 @@
                         <group>
                             <field name="service_id" string="Servicio relacionado"/>
                             <field name="description" />
-                            <field name="close_date_debate" attrs="{'invisible': [('status', '!=', 'draft'), ('status', '!=', 'debate'), ('status', '!=', 'complete')]}"/>
-                            <field name="close_date_deliver" attrs="{'invisible': [('status', '!=', 'draft'), ('status', '!=', 'deliver'), ('status', '!=', 'complete')]}"/>
-                            <field name="close_date"/>
+                            <field name="close_date_debate"/>
+                            <field name="close_date_deliver"/>
                         </group>
                     </group>
                     <notebook>
-                        <page name="comments" string="Comentarios" attrs="{'invisible': [('status', '!=', 'debate'), ('status', '!=', 'complete')]}">
+                        <page name="comments" string="Comentarios">
                             <field name="comments">
                                 <tree editable="bottom">
                                     <!-- <field name="proposals_id" readonly='true' string="Propuesta relacionada"/> -->
@@ -58,7 +57,7 @@
                             </field>
                         </page>
 
-                        <page name="vote" string="Votación" attrs="{'invisible': [('status', '!=', 'deliver'), ('status', '!=', 'complete')]}">
+                        <page name="vote" string="Votación">
                             <field name="vote">
                                 <tree editable="bottom">
                                     <field name="name"/>
@@ -67,7 +66,7 @@
                             </field>
                         </page>
 
-                        <page name="complete" string="Resultados" attrs="{'invisible': [('status', '!=', 'complete')]}">
+                        <page name="complete" string="Resultados">
                             <group>
                                 <field name="result" />
                             </group>
