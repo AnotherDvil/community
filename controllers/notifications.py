@@ -4,7 +4,6 @@ from odoo import http
 from odoo.http import request, Response
 
 class Notifications(http.Controller):
-
     @http.route('/notifications', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
     def get_notifications(self, **kwargs):
         token = kwargs.get('token')

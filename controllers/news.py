@@ -13,7 +13,20 @@ class News(http.Controller):
         }
         request_new = request.env['news'].sudo().create(new_news)
         if request_new:
-            
+            # Obtiene el servicio relacionado
+            service = request.env['services'].sudo().browse(id_service)
+            if service:
+                # Obtiene los seguidores del servicio
+                followers = service.followers.filtered(lambda f: f.id != request_new.create_uid.id)
+
+                # Crea notificaciones para los seguidores
+                for follower in followers:
+                    request.env['notifications'].sudo().create({
+                        'name': follower.id,
+                        'message': f'Se ha creado una nueva novedad en el servicio: {service.name}',
+                        'is_read': False,
+                    })
+
             response = {
                 'success': True,
                 'Message': 'La novedad se creó con éxito',
