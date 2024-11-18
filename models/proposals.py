@@ -1,6 +1,26 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api
 from datetime import datetime, date, time, timedelta
+import logging
+import re
+
+_logger = logging.getLogger(__name__)
+
+# Lista de malas palabras a censurar
+BAD_WORDS = [
+    "pendejo", "pendeja", "cabron", "cabrona", "chingón", "chingona", "chingar", "chingada", 
+    "chingado", "puto", "puta", "joto", "marica", "maricón", "mamón", "mamona", "culero", 
+    "culera", "pinche", "guey", "wey", "zorra", "perra", "baboso", "babosa", "pito", "verga", 
+    "menso", "culito", "madrazo", "chingadera", "chingadazo", "chingas", "chingaste", 
+    "hijo de la chingada", "chingón", "chingona", "tarado", "estúpido", "idiota", "mugroso", 
+    "mugrosa", "güey", "huevón", "guevón", "jodido", "mierda", "cacas", "nalga", "nalgotas", 
+    "nalguitas", "prieto", "prieta", "nalgón", "gorda", "huevudo", "zorrón", "lagartona", "burra",
+    "burro", "cochina", "metiche", "manchado", "chafa", "corriente", "piruja", "pirujita", "argüendero", 
+    "chismoso", "chismosa", "vago", "rata", "mamonazo", "pelón", "menso", "mensote", "apestoso", "pata rajada", 
+    "marrano", "zoquete", "imbécil", "ocicón", "mamilas", "chango", "meco", "no mames", "a huevo", "qué pedo",
+    "pinche güey", "pinche vieja", "chingas a tu madre", "hijo de puta", "baboso", "pinche pendejo", "chingado güey", 
+    "culero", "culera", "chingaquedito", "chale", "vato", "pinche vato", "pinche cabrón", "pinche joto"
+]
 
 class proposals(models.Model):
     _name = 'proposals'
@@ -142,6 +162,28 @@ class proposals(models.Model):
                     print(f"La fecha y hora actual no están dentro del margen de la fecha de cierre para la propuesta: '{record.name}'.")
             else:
                 print(f"La propuesta: '{record.name}' no tiene una fecha de cierre definida.")
+    
+    def censor_bad_words(self, text):
+        for bad_word in BAD_WORDS:
+            regex = re.compile(re.escape(bad_word), re.IGNORECASE)
+            replacement = bad_word[0] + '*' * (len(bad_word) - 2) + bad_word[-1]
+            text = regex.sub(replacement, text)
+        return text
+
+    @api.model
+    def create(self, vals):
+        if 'description' in vals:
+            vals['description'] = self.censor_bad_words(vals['description'])
+        if 'name' in vals:
+            vals['name'] = self.censor_bad_words(vals['name'])
+        return super(proposals, self).create(vals)
+
+    def write(self, vals):
+        if 'description' in vals:
+            vals['description'] = self.censor_bad_words(vals['description'])
+        if 'name' in vals:
+            vals['name'] = self.censor_bad_words(vals['name'])
+        return super(proposals, self).write(vals)
 
 class comments(models.Model):
     _name = 'comments'
@@ -151,6 +193,24 @@ class comments(models.Model):
 
     written_by = fields.Many2one('res.partner', string="Creado por")
     proposals_id = fields.Many2one('proposals', string="Propuestas")
+
+    def censor_bad_words(self, text):
+        for bad_word in BAD_WORDS:
+            regex = re.compile(re.escape(bad_word), re.IGNORECASE)
+            replacement = bad_word[0] + '*' * (len(bad_word) - 2) + bad_word[-1]
+            text = regex.sub(replacement, text)
+        return text
+
+    @api.model
+    def create(self, vals):
+        if 'name' in vals:
+            vals['name'] = self.censor_bad_words(vals['name'])
+        return super(comments, self).create(vals)
+
+    def write(self, vals):
+        if 'name' in vals:
+            vals['name'] = self.censor_bad_words(vals['name'])
+        return super(comments, self).write(vals)
 
 class vote(models.Model):
     _name = 'vote'

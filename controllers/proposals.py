@@ -126,19 +126,25 @@ class Proposals(http.Controller):
     @http.route('/proposals/create', type="json", auth='none', methods=['POST'], csrf=False, cors='*')
     def create_proposals(self, **kwargs):
         token = kwargs.get('written_by')
+        description = kwargs.get('description', '')
+        name = kwargs.get('name', '')
         update_user = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
-        print(update_user)
+
         if not update_user:
             return {
                 'success': False,
                 'message': 'El usuario no fue encontrado con el token proporcionado'
             }
 
+        proposals_model = request.env['reviews']
+        description_censored = proposals_model.censor_bad_words(description)
+        name_censored = proposals_model.censor_bad_words(name)
+
         # Crear la propuesta
         new_proposals = {
-            'name': kwargs.get('name'),
+            'name': name_censored,
             'status': 'debate',
-            'description': kwargs.get('description'),
+            'description': description_censored,
             'service_id': kwargs.get('service_id'),
             'written_by': update_user.id
         }
@@ -193,10 +199,14 @@ class Proposals(http.Controller):
 
         if proposal.status == 'debate':
             token = kwargs.get('token')
+            name = kwargs.get('name')
+
             update_user = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
+            comment_model = request.env['comments']
+            name_censored = comment_model.censor_bad_words(name)
 
             new_comment = {
-                'name': kwargs.get('name'),
+                'name': name_censored,
                 'written_by': update_user.id,
                 'proposals_id': id_proposal
             }

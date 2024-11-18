@@ -39,13 +39,22 @@ class Reviews(http.Controller):
                 'success': False,
                 'Message': 'El usuario no fue encontrado con el token proporcionado',
             }
+
+        description = kwargs.get('description', '')
+        name = kwargs.get('name', '')
+
+        reviews_model = request.env['reviews']
+        description_censored = reviews_model.censor_bad_words(description)
+        name_censored = reviews_model.censor_bad_words(name)
+
         new_review = {
-            'name': kwargs.get('name'),
-            'description': kwargs.get('description'),
+            'name': name_censored,
+            'description': description_censored,
             'rating': kwargs.get('rating'),
             'written_by': busqueda.id,
             'service_id': kwargs.get('service_id')
         }
+        
         request_review = request.env['reviews'].sudo().create(new_review)
         if request_review:
             # Actualiza la calificación promedio

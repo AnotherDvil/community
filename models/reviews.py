@@ -41,11 +41,23 @@ class reviews(models.Model):
         return super(reviews, self).create(vals) """
 
     # Lista de malas palabras a censurar
-    BAD_WORDS = ["tetas", "culo", "pito"]
+    BAD_WORDS = [
+        "pendejo", "pendeja", "cabron", "cabrona", "chingón", "chingona", "chingar", "chingada", 
+        "chingado", "puto", "puta", "joto", "marica", "maricón", "mamón", "mamona", "culero", 
+        "culera", "pinche", "guey", "wey", "zorra", "perra", "baboso", "babosa", "pito", "verga", 
+        "menso", "culito", "madrazo", "chingadera", "chingadazo", "chingas", "chingaste", 
+        "hijo de la chingada", "chingón", "chingona", "tarado", "estúpido", "idiota", "mugroso", 
+        "mugrosa", "güey", "huevón", "guevón", "jodido", "mierda", "cacas", "nalga", "nalgotas", 
+        "nalguitas", "prieto", "prieta", "nalgón", "gorda", "huevudo", "zorrón", "lagartona", "burra",
+        "burro", "cochina", "metiche", "manchado", "chafa", "corriente", "piruja", "pirujita", "argüendero", 
+        "chismoso", "chismosa", "vago", "rata", "mamonazo", "pelón", "menso", "mensote", "apestoso", "pata rajada", 
+        "marrano", "zoquete", "imbécil", "ocicón", "mamilas", "chango", "meco", "no mames", "a huevo", "qué pedo",
+        "pinche güey", "pinche vieja", "chingas a tu madre", "hijo de puta", "baboso", "pinche pendejo", "chingado güey", 
+        "culero", "culera", "chingaquedito", "chale", "vato", "pinche vato", "pinche cabrón", "pinche joto"
+    ]
 
     def censor_bad_words(self, text):
         for bad_word in self.BAD_WORDS:
-            # Usa regex para reemplazar cada mala palabra con asteriscos
             regex = re.compile(re.escape(bad_word), re.IGNORECASE)
             replacement = bad_word[0] + '*' * (len(bad_word) - 2) + bad_word[-1]
             text = regex.sub(replacement, text)

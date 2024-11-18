@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-
+import logging
+import re
 import random
 import string
 from odoo import models, fields, api
+
+_logger = logging.getLogger(__name__)
 
 class services(models.Model):
     _name = 'services'
@@ -61,8 +64,28 @@ class services(models.Model):
     reviews = fields.One2many('reviews', 'service_id', string='Reseñas')
     proposals = fields.One2many('proposals', 'service_id', string="Propuestas")
 
+    # Lista de malas palabras a censurar
+    BAD_WORDS = [
+        "pendejo", "pendeja", "cabron", "cabrona", "chingón", "chingona", "chingar", "chingada", 
+        "chingado", "puto", "puta", "joto", "marica", "maricón", "mamón", "mamona", "culero", 
+        "culera", "pinche", "guey", "wey", "zorra", "perra", "baboso", "babosa", "pito", "verga", 
+        "menso", "culito", "madrazo", "chingadera", "chingadazo", "chingas", "chingaste", 
+        "hijo de la chingada", "chingón", "chingona", "tarado", "estúpido", "idiota", "mugroso", 
+        "mugrosa", "güey", "huevón", "guevón", "jodido", "mierda", "cacas", "nalga", "nalgotas", 
+        "nalguitas", "prieto", "prieta", "nalgón", "gorda", "huevudo", "zorrón", "lagartona", "burra",
+        "burro", "cochina", "metiche", "manchado", "chafa", "corriente", "piruja", "pirujita", "argüendero", 
+        "chismoso", "chismosa", "vago", "rata", "mamonazo", "pelón", "menso", "mensote", "apestoso", "pata rajada", 
+        "marrano", "zoquete", "imbécil", "ocicón", "mamilas", "chango", "meco", "no mames", "a huevo", "qué pedo",
+        "pinche güey", "pinche vieja", "chingas a tu madre", "hijo de puta", "baboso", "pinche pendejo", "chingado güey", 
+        "culero", "culera", "chingaquedito", "chale", "vato", "pinche vato", "pinche cabrón", "pinche joto"
+    ]
+
     @api.model
     def create(self, vals):
+        if 'description' in vals:
+            vals['description'] = self.censor_bad_words(vals['description'])
+        if 'name' in vals:
+            vals['name'] = self.censor_bad_words(vals['name'])
         # Generar access_code automáticamente si no se ha proporcionado
         if 'access_code' not in vals or not vals['access_code']:
             vals['access_code'] = self.generate_access_code()
@@ -73,6 +96,20 @@ class services(models.Model):
             partner = self.env['res.partner'].browse(record.owner.id)
             partner.get_owner()  # Llama a la función get_owner para actualizar el campo 'service_owner'
         return record
+
+    def write(self, vals):
+        if 'description' in vals:
+            vals['description'] = self.censor_bad_words(vals['description'])
+        if 'name' in vals:
+            vals['name'] = self.censor_bad_words(vals['name'])
+        return super(reviews, self).write(vals)
+
+    def censor_bad_words(self, text):
+        for bad_word in self.BAD_WORDS:
+            regex = re.compile(re.escape(bad_word), re.IGNORECASE)
+            replacement = bad_word[0] + '*' * (len(bad_word) - 2) + bad_word[-1]
+            text = regex.sub(replacement, text)
+        return text
 
     def generate_access_code(self):
         characters = string.ascii_letters + string.digits

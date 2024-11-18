@@ -5,10 +5,18 @@ from odoo.http import request, Response
 
 class News(http.Controller):
     @http.route('/news/create/<int:id_service>', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
-    def create_news(self, id_service, **kwargs): 
+    def create_news(self, id_service, **kwargs):
+        description = kwargs.get('description', '')
+        name = kwargs.get('name', '')
+
+        # Invocar la función de censura
+        news_model = request.env['news']
+        description_censored = news_model.censor_bad_words(description)
+        name_censored = news_model.censor_bad_words(name)
+
         new_news = {
-            'name': kwargs.get('name'),
-            'description': kwargs.get('description'),
+            'name': name_censored,
+            'description': description_censored,
             'service_id': id_service
         }
         request_new = request.env['news'].sudo().create(new_news)
