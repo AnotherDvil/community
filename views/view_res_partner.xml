@@ -87,6 +87,7 @@
                                 <field name="message" />
                                 <field name="is_read" />
                                 <field name="create_date" />
+                                <field name="route" />
                             </tree>
                         </field>
                     </page>

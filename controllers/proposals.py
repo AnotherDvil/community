@@ -165,7 +165,8 @@ class Proposals(http.Controller):
                         notifications.append({
                             'name': follower.id,
                             'message': f"Se ha creado una nueva propuesta en el negocio '{service.name}': {new_proposals['name']}.",
-                            'is_read': False
+                            'is_read': False,
+                            'route': f'/ProposalDetail/{service.id}/{new_proposal.id}'
                         })
 
                 # Agrega notificación para el dueño del negocio si aplica
@@ -173,7 +174,8 @@ class Proposals(http.Controller):
                     notifications.append({
                         'name': service.owner.id,
                         'message': f"Se ha creado una nueva propuesta en tu negocio '{service.name}': {new_proposals['name']}.",
-                        'is_read': False
+                        'is_read': False,
+                        'route': f'/ProposalDetail/{service.id}/{new_proposal.id}'
                     })
 
                 # Crea las notificaciones

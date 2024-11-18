@@ -68,6 +68,7 @@ class Rewards(http.Controller):
                 request.env['notifications'].sudo().create({
                     'name': business_owner.id,
                     'message': notification_message,
+                    'route': False
                 })
 
             return {
@@ -130,6 +131,7 @@ class Rewards(http.Controller):
                     notifications.append({
                         'name': follower.id,
                         'message': f"¡Nueva recompensa disponible! {new_rewards.name}: {new_rewards.description}",
+                        'route': f"/MyRewards"
                     })
 
                 # Crea todas las notificaciones en un solo paso

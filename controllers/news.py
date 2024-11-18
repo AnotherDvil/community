@@ -33,6 +33,7 @@ class News(http.Controller):
                         'name': follower.id,
                         'message': f'Se ha creado una nueva novedad en el servicio: {service.name}',
                         'is_read': False,
+                        'route': f'/services/{service.id}'
                     })
 
             response = {

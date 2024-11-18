@@ -102,7 +102,7 @@ class services(models.Model):
             vals['description'] = self.censor_bad_words(vals['description'])
         if 'name' in vals:
             vals['name'] = self.censor_bad_words(vals['name'])
-        return super(reviews, self).write(vals)
+        return super(services, self).write(vals)
 
     def censor_bad_words(self, text):
         for bad_word in self.BAD_WORDS:

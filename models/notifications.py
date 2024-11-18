@@ -7,3 +7,4 @@ class Notifications(models.Model):
     message = fields.Text(string="Mensaje", required=True)
     is_read = fields.Boolean(string="Leída", default=False)
     create_date = fields.Datetime(string="Fecha de creación", default=fields.Datetime.now)
+    route = fields.Char(string="Ruta")
