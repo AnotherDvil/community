@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+import requests
 import secrets
 import json
 from odoo import http
 from odoo.http import request, Response
+from PIL import Image
+from io import BytesIO
 
 class CommunityLogin(http.Controller):
     @http.route('/login', type='json', auth='none', methods=['POST'], csrf=False, cors='*')
@@ -99,7 +102,7 @@ class CommunityLogin(http.Controller):
                     'email': email,
                     'password': password,
                     'job': user_type,
-                    'token': token  # Guardar el token generado
+                    'token': token  # Guarda el token generado
                 })
 
                 if usuario:

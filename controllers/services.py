@@ -8,7 +8,7 @@ from odoo.http import request, Response
 class Services(http.Controller):
     @http.route('/services', type="http", auth='none', methods=['GET'], csrf=False, cors='*')
     def get_services(self, **kwargs):
-        services = request.env['services'].sudo().search([('name', '!=', False), ('archived', '=', False)])
+        services = request.env['services'].sudo().search([('name', '!=', False), ('archived', '=', False)], order="create_date desc")
         unidades = []
         for service in services:
             unidades.append({
@@ -53,7 +53,7 @@ class Services(http.Controller):
     def get_service_especific(self, id_service, **kwargs):
         # Solicitudes BDD
         services = request.env['services'].sudo().search([('id', '=', id_service), ('name', '!=', False), ('archived', '=', False)])
-        novedades = request.env['news'].sudo().search([('service_id', '=', id_service), ('name', '!=', False)])
+        novedades = request.env['news'].sudo().search([('service_id', '=', id_service), ('name', '!=', False)], order="create_date desc")
         unidades = []  # Inicializar la lista vacía antes de la verificación
         
         if services.exists():
@@ -86,12 +86,24 @@ class Services(http.Controller):
         new_services = {
             'name': kwargs.get('name'),
             'direction': kwargs.get('direction'),
-            'image': kwargs.get('image'),
             'number_phone': kwargs.get('number_phone'),
             'email': kwargs.get('email'),
             'owner': kwargs.get('owner'),
             'description': kwargs.get('description')
         }
+
+        image_data = kwargs.get('image')  # Obtener la imagen en formato base64
+
+        if image_data and image_data.startswith('data:image/'):
+            try:
+                # Elimina el prefijo 'data:image/png;base64,'
+                header, base64_image = image_data.split(',', 1)
+                new_services['image'] = base64_image
+                print(new_services['image'])
+            except Exception as e:
+                print(f"Error al procesar la imagen: {str(e)}")
+                new_services['image'] = None
+
         update_user = request.env['res.partner'].sudo().search([('id', '=', int(new_services['owner']))], limit=1)
         if new_services and update_user:
             new_service = request.env['services'].sudo().create(new_services)

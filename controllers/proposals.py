@@ -8,7 +8,7 @@ class Proposals(http.Controller):
     @http.route('/proposals/<int:id_service>', type="http", auth="none", methods=['GET'], csrf=False, cors='*')
     def get_proposals(self, id_service, **kwargs):
         # Solicitamos a la BDD
-        proposals = request.env['proposals'].sudo().search([('service_id', '=', id_service)])
+        proposals = request.env['proposals'].sudo().search([('service_id', '=', id_service)], order="create_date desc")
 
         proposals_list = []
 

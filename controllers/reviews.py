@@ -9,7 +9,7 @@ class Reviews(http.Controller):
     @http.route('/reviews/<int:id_service>', type="http", auth="none", methods=['GET'], csrf=False, cors='*')
     def get_reviews(self, id_service, **kwargs):
         # Solicitudes BDD
-        reviews = request.env['reviews'].sudo().search([('service_id', '=', id_service)])
+        reviews = request.env['reviews'].sudo().search([('service_id', '=', id_service)], order="create_date desc")
         
         review_list = []  # Declaramos la lista fuera del bucle
 
