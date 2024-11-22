@@ -62,6 +62,7 @@ class Services(http.Controller):
                 if novedades.exists():
                     for novedad in novedades:
                         novedades_list.append({
+                            'id': novedad.id,
                             'name': novedad.name,
                             'description': novedad.description
                         })
