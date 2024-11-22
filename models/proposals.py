@@ -77,17 +77,32 @@ class proposals(models.Model):
                     record.status = 'deliver'
             elif record.close_date_debate and record.close_date_deliver:
                 if abs(today - record.close_date_deliver) <= margin:
+                    record.obtain_results()
+                    record.status = 'complete'
+
+    def _cron_change_phase(self):
+        today = datetime.today()
+        print("Hoy es: ",today)
+        proposals = self.env['proposals'].search([('name', '!=', False)])
+        for record in proposals:
+            margin = timedelta(minutes=5)
+            if record.close_date_debate:
+                if abs(today - record.close_date_debate) <= margin:
+                    record.status = 'deliver'
+            elif record.close_date_debate and record.close_date_deliver:
+                if abs(today - record.close_date_deliver) <= margin:
+                    record.obtain_results()
                     record.status = 'complete'
 
     def obtain_results(self):
         today = datetime.today()
         print("Hoy es: ",today)
         for record in self:
-            if record.close_date_debate:
+            if record.close_date_debate and record.close_date_deliver:
                 margin = timedelta(minutes=10) # Margen de tiempo, es decir, considera 30 mn antes o despues
 
                 # Varificados que hoy está dentro del margen de la fecha de cierre
-                if abs(today - record.close_date_debate) <= margin:
+                if abs(today - record.close_date_deliver) <= margin:
                     count_yes = 0
                     count_no = 0
                     count_meh = 0

@@ -35,6 +35,7 @@
         'security/community_security.xml',
         'security/ir.model.access.csv',
         'data/obtain_results_prop.xml',
-        'data/reset_moneda.xml'
+        'data/reset_moneda.xml',
+        'data/change_phase.xml'
     ]
 }
