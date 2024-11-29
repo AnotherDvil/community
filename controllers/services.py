@@ -7,8 +7,13 @@ from odoo.http import request, Response
 
 class Services(http.Controller):
     @http.route('/services', type="http", auth='none', methods=['GET'], csrf=False, cors='*')
-    def get_services(self, **kwargs):
-        services = request.env['services'].sudo().search([('name', '!=', False), ('archived', '=', False)], order="create_date desc")
+    def get_services(self, limit=10, offset=0, **kwargs):
+        services = request.env['services'].sudo().search(
+            [('name', '!=', False), ('archived', '=', False)],
+            order="create_date desc",
+            limit=int(limit),
+            offset=int(offset)
+        )
         unidades = []
         for service in services:
             unidades.append({
@@ -18,8 +23,7 @@ class Services(http.Controller):
                 'qualification': service.qualification,
                 'description': service.description
             })
-        json_object = json.dumps(unidades)
-        return json_object
+        return json.dumps(unidades)
 
     @http.route('/search_service', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
     def search_service(self, **kwargs):

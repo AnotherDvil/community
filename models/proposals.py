@@ -239,3 +239,4 @@ class vote(models.Model):
 
     written_by = fields.Many2one('res.partner', string="Creado por")
     proposals_id = fields.Many2one('proposals', string="Propuestas")
+    validation = fields.Boolean("Ya votó?")

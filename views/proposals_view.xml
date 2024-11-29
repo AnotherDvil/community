@@ -62,6 +62,7 @@
                                 <tree editable="bottom">
                                     <field name="name"/>
                                     <field name="written_by"/>
+                                    <field name="validation" />
                                 </tree>
                             </field>
                         </page>

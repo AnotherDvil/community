@@ -14,7 +14,7 @@ class services(models.Model):
     
     name = fields.Char('Nombre del negocio')
     owner = fields.Many2one('res.partner', 'Dueño')
-    image = fields.Binary('Perfil')
+    image = fields.Image('Perfil', attachment=True, max_width=1024, max_height=1024, store=True)
     direction = fields.Char('Dirección', tracking=True)
     number_phone = fields.Char('Teléfono', tracking=True)
     email = fields.Char('Correo electrónico', tracking=True)

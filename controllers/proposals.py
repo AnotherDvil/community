@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+import pytz
 import json
 from odoo import http
+from odoo import fields
 from odoo.http import request, Response
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from odoo.fields import Datetime
@@ -128,7 +130,22 @@ class Proposals(http.Controller):
         token = kwargs.get('written_by')
         description = kwargs.get('description', '')
         name = kwargs.get('name', '')
+        debateEndDate = kwargs.get('debateEndDate')
+        deliberationEndDate = kwargs.get('deliberationEndDate')
+        print("debateEndDate: ", debateEndDate)
+        print("deliberationEndDate: ", deliberationEndDate)
+
         update_user = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
+
+        # Convertir las fechas a UTC
+        local_tz = pytz.timezone('America/Mexico_City')  # Cambia esto a la zona horaria correcta
+        if debateEndDate:
+            local_date = datetime.strptime(debateEndDate + ":00", '%Y-%m-%dT%H:%M:%S')
+            debateEndDate = local_tz.localize(local_date).astimezone(pytz.utc)
+        if deliberationEndDate:
+            local_date = datetime.strptime(deliberationEndDate + ":00", '%Y-%m-%dT%H:%M:%S')
+            deliberationEndDate = local_tz.localize(local_date).astimezone(pytz.utc)
+
 
         if not update_user:
             return {
@@ -146,7 +163,9 @@ class Proposals(http.Controller):
             'status': 'debate',
             'description': description_censored,
             'service_id': kwargs.get('service_id'),
-            'written_by': update_user.id
+            'written_by': update_user.id,
+            'close_date_debate': fields.Datetime.to_string(debateEndDate) if debateEndDate else False,
+            'close_date_deliver': fields.Datetime.to_string(deliberationEndDate) if deliberationEndDate else False,
         }
 
         if new_proposals:
@@ -241,26 +260,42 @@ class Proposals(http.Controller):
         if proposal.status == 'deliver':
             token = kwargs.get('token')
             update_user = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
+            validate = request.env['vote'].sudo().search([
+                ('written_by', '=', update_user.id)
+            ])
 
-            new_vote = {
-                'name': kwargs.get('name'),
-                'written_by': update_user.id,
-                'proposals_id': id_proposal
-            }
-
-            if update_user and new_vote:
-                vote_up = request.env['vote'].sudo().create(new_vote)
-                response = {
-                    'success': True,
-                    'message': 'El voto se creó con exito',
-                    'id': vote_up.id
-                }
-            else:
+            if validate:
                 response = {
                     'success': False,
-                    'message': 'No se pudo crear el voto'
+                    'message': 'El usuario ya votó',
+                    'validacion': False
                 }
-            return response
+
+                return response
+            else:
+
+                new_vote = {
+                    'name': kwargs.get('name'),
+                    'written_by': update_user.id,
+                    'proposals_id': id_proposal,
+                    'validation': True
+                }
+
+                if update_user and new_vote:
+                    vote_up = request.env['vote'].sudo().create(new_vote)
+                    response = {
+                        'success': True,
+                        'message': 'El voto se creó con exito',
+                        'id': vote_up.id,
+                        'validacion': True
+                    }
+                else:
+                    response = {
+                        'success': False,
+                        'message': 'No se pudo crear el voto',
+                        'validacion': False
+                    }
+                return response
         else:
             response = {
                 'success': False,
