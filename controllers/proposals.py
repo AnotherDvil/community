@@ -261,7 +261,8 @@ class Proposals(http.Controller):
             token = kwargs.get('token')
             update_user = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
             validate = request.env['vote'].sudo().search([
-                ('written_by', '=', update_user.id)
+                ('written_by', '=', update_user.id),
+                ('proposals_id', '=', id_proposal)
             ])
 
             if validate:
