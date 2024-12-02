@@ -6,14 +6,21 @@ from odoo import http
 from odoo.http import request, Response
 
 class Services(http.Controller):
-    @http.route('/services', type="http", auth='none', methods=['GET'], csrf=False, cors='*')
-    def get_services(self, limit=10, offset=0, **kwargs):
-        services = request.env['services'].sudo().search(
-            [('name', '!=', False), ('archived', '=', False)],
-            order="create_date desc",
-            limit=int(limit),
-            offset=int(offset)
-        )
+    @http.route('/services', type="json", auth='none', methods=['POST'], csrf=False, cors='*')
+    def get_services(self, **kwargs):
+        token = kwargs.get('token')
+        validate_follow = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
+        if validate_follow.service_owner:
+            services = request.env['services'].sudo().search(
+                [('name', '!=', False), ('archived', '=', False), ('id', '!=', validate_follow.service_owner.id)],
+                order="create_date desc",
+            )
+        else:
+            services = request.env['services'].sudo().search(
+                [('name', '!=', False), ('archived', '=', False)],
+                order="create_date desc",
+            )
+
         unidades = []
         for service in services:
             unidades.append({
@@ -23,7 +30,7 @@ class Services(http.Controller):
                 'qualification': service.qualification,
                 'description': service.description
             })
-        return json.dumps(unidades)
+        return unidades
 
     @http.route('/search_service', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
     def search_service(self, **kwargs):
@@ -53,8 +60,8 @@ class Services(http.Controller):
             }
         return json.dumps(response)
 
-    @http.route('/services/<int:id_service>', type="http", auth='none', methods=['GET'], csrf=False, cors='*')
-    def get_service_especific(self, id_service, **kwargs):
+    @http.route('/servicesDetail/<int:id_service>', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
+    def get_service_detail(self, id_service, **kwargs):
         # Solicitudes BDD
         services = request.env['services'].sudo().search([('id', '=', id_service), ('name', '!=', False), ('archived', '=', False)])
         novedades = request.env['news'].sudo().search([('service_id', '=', id_service), ('name', '!=', False)], order="create_date desc")
@@ -85,6 +92,49 @@ class Services(http.Controller):
             })
         json_object = json.dumps(unidades) # Convierte el resultado a JSON
         return json_object
+
+    @http.route('/services/<int:id_service>', type="json", auth='none', methods=['POST'], csrf=False, cors='*')
+    def get_service_especific(self, id_service, **kwargs):
+        token = kwargs.get('token')
+        validate_follow = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
+        service = request.env['services'].sudo().browse(id_service)
+
+        if not validate_follow:
+            return json.dumps({
+                'success': False,
+                'message': 'Usuario no encontrado con el token proporcionado'
+            })
+    
+        if not service.exists():
+            return json.dumps({
+                'success': False,
+                'message': 'El servicio no existe'
+            })
+
+        # Validar si el usuario sigue el servicio
+        is_following = service in validate_follow.followed_services
+
+        novedades = request.env['news'].sudo().search([('service_id', '=', id_service), ('name', '!=', False)], order="create_date desc")
+
+        novedades_list = []
+        for novedad in novedades:
+            novedades_list.append({
+                'id': novedad.id,
+                'name': novedad.name,
+                'description': novedad.description
+            })
+
+        unidad = {
+            'id': service.id,
+            'name': service.name,
+            'qualification': service.qualification,
+            'description': service.description,
+            'novedades': novedades_list,
+            'is_following': is_following,  # Indicar si el usuario sigue el servicio
+            'image': base64.b64encode(service.image).decode() if service.image else False
+        }
+
+        return unidad
 
     @http.route('/services/create', type="json", auth='none', methods=['POST'], csrf=False, cors='*')
     def create_services(self, **kwargs):

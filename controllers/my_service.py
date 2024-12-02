@@ -10,7 +10,7 @@ class MyService(http.Controller):
     @http.route('/myService/<int:id_service>', type="http", auth='none', methods=['GET'], csrf=False, cors='*')
     def get_my_service(self, id_service, **kwargs):
         service = request.env['services'].sudo().search([('id', '=', id_service), ('name', '!=', False)])
-        novedades = request.env['news'].sudo().search([('service_id', '=', id_service), ('name', '!=', False)])
+        novedades = request.env['news'].sudo().search([('service_id', '=', id_service), ('name', '!=', False)], order="create_date desc")
 
         unidades = []
 

@@ -23,7 +23,8 @@ class Rewards(http.Controller):
                         'description': reward.description,
                         'points_required': reward.points_required,
                         'active': reward.active,
-                        'image': base64.b64encode(reward.image).decode() if reward.image else False
+                        'image': base64.b64encode(reward.image).decode() if reward.image else False,
+                        'service': reward.service_id.name
                     })
         else:
             reward_list,append({
@@ -99,7 +100,9 @@ class Rewards(http.Controller):
                     'name': reward.name,
                     'description': reward.description,
                     'points_required': reward.points_required,
-                    'image': base64.b64encode(reward.image).decode() if reward.image else False
+                    'is_active': reward.active,
+                    'image': base64.b64encode(reward.image).decode() if reward.image else False,
+                    'service': reward.service_id.name
                 })
         else:
             rewards_list.append({

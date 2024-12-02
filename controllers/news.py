@@ -48,7 +48,7 @@ class News(http.Controller):
             }
         return response
 
-    @http.route('/news/delete/<int:id_new>', type="json", auth="none", methods=['DELETE'], csrf=False, cors='*')
+    @http.route('/news/delete/<int:id_new>', type="http", auth="none", methods=['DELETE'], csrf=False, cors='*')
     def delete_news(self, id_new, **kwargs):
         news = request.env['news'].sudo().browse(id_new)
         if not news.exists():
