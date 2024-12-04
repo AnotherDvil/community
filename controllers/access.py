@@ -33,6 +33,9 @@ class CommunityLogin(http.Controller):
             if partner.job == 'owner':
                 service_id = partner.service_owner.id
                 response['owner_service'] = service_id
+            if partner.job == 'employee':
+                service_id = partner.service_id_e.id
+                response['employee_service'] = service_id
         else:
             response = {
                 'status': False,

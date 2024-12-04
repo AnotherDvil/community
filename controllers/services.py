@@ -15,6 +15,11 @@ class Services(http.Controller):
                 [('name', '!=', False), ('archived', '=', False), ('id', '!=', validate_follow.service_owner.id)],
                 order="create_date desc",
             )
+        elif validate_follow.service_id_e:
+            services = request.env['services'].sudo().search(
+                [('name', '!=', False), ('archived', '=', False), ('id', '!=', validate_follow.service_id_e.id)],
+                order="create_date desc",
+            )
         else:
             services = request.env['services'].sudo().search(
                 [('name', '!=', False), ('archived', '=', False)],
@@ -42,11 +47,13 @@ class Services(http.Controller):
             # Busca el usuario por su ID
             user = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
             if user:
+                service.sudo().write({'empleados': [(4, user.id)]})
                 # Asocia el usuario con el servicio (empleado)
                 user.sudo().write({'service_id_e': service.id, 'job': 'employee', 'service_id_e': service.id})
                 response = {
                     'status': True,
-                    'message': 'El usuario fue agregado al servicio como empleado.'
+                    'message': 'El usuario fue agregado al servicio como empleado.',
+                    'service': service.id
                 }
             else:
                 response = {
@@ -58,7 +65,8 @@ class Services(http.Controller):
                 'status': False,
                 'message': 'El código de acceso no se encontró.'
             }
-        return json.dumps(response)
+        #return json.dumps(response)
+        return response
 
     @http.route('/servicesDetail/<int:id_service>', type="json", auth="none", methods=['POST'], csrf=False, cors='*')
     def get_service_detail(self, id_service, **kwargs):

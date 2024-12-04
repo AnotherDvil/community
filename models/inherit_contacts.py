@@ -99,9 +99,11 @@ class Contacts(models.Model):
                     record.service_owner = services.id  # Asigna el servicio al campo 'service_owner'
                     record.job = 'owner'  # Cambia el tipo de usuario a 'Dueño'
                 else:
+                    record.service_owner = False
+                """ else:
                     # Si no se encuentra un servicio, asigna False
                     record.service_owner = ''
-                    record.job = 'user'  # Restablece el tipo de usuario a 'Usuario'
+                    record.job = 'user'  # Restablece el tipo de usuario a 'Usuario' """
             except Exception as e:
                 # Manejo de errores para evitar que el sistema falle
                 _logger.error(f"Error al calcular el servicio del dueño para el contacto {record.id}: {str(e)}")
