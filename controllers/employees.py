@@ -32,6 +32,7 @@ class Employees(http.Controller):
             employee_to_unlink = request.env['res.partner'].sudo().search([('id', '=', id_employee)])
             employee.empleados = [(3, employee_to_unlink.id)]
             employee_to_unlink.job = 'user'
+            employee_to_unlink.service_id_e = False
 
             response = {
                 'success': True,

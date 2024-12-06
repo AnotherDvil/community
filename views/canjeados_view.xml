@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    
+    <record id="reward_user_rel_view_tree" model="ir.ui.view">
+        <field name="name">reward.user.rel.view.tree</field>
+        <field name="model">reward.user.rel</field>
+        <field name="arch" type="xml">
+            <tree string="Canjeados">
+                <field name="id" />
+                <field name="reward_id" />
+                <field name="user_id" />
+                <field name="entregada" />
+            </tree>
+        </field>
+    </record>
+
+
+</odoo>

@@ -32,6 +32,7 @@
         'views/menu_view.xml',
         'views/view_services.xml',
         'views/proposals_view.xml',
+        'views/canjeados_view.xml',
         'security/community_security.xml',
         'security/ir.model.access.csv',
         'data/obtain_results_prop.xml',

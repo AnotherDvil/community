@@ -48,6 +48,7 @@ class Contacts(models.Model):
             # Filtrar recompensas que no están en las canjeadas
             available_rewards = all_rewards - record.redeemed_rewards
             record.followed_rewards = available_rewards
+            self.register_existing_rewards()
 
     def redeem_reward(self, reward_id):
         # Obtenemos el usuario y la recompensa que desea canjear
@@ -66,6 +67,22 @@ class Contacts(models.Model):
 
         # Agregamos la recompensa a la lista de recompensas canjeadas
         self.write({'redeemed_rewards': [(4, reward.id)]})
+        self.register_existing_rewards()
+
+    def register_existing_rewards(self):
+        # Obtener todas las recompensas ya canjeadas por este usuario
+        for partner in self:
+            for reward in partner.redeemed_rewards:
+                # Crear una relación entre el usuario y la recompensa si no existe
+                existing_rel = self.env['reward.user.rel'].search([
+                    ('user_id', '=', partner.id),
+                    ('reward_id', '=', reward.id)
+                ])
+                if not existing_rel:
+                    self.env['reward.user.rel'].create({
+                        'reward_id': reward.id,
+                        'user_id': partner.id
+                    })
 
     def redeem_reward_action(self):
         self.ensure_one()
@@ -81,6 +98,7 @@ class Contacts(models.Model):
         # Usar el primer reward_id en available_rewards que aún no haya sido canjeado
         reward_id = available_rewards[0].id
         result = self.redeem_reward(reward_id)
+        self.register_existing_rewards()
 
     @api.model
     def create(self, vals):

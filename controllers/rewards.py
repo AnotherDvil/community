@@ -117,8 +117,20 @@ class Rewards(http.Controller):
             'description': kwargs.get('description'),
             'points_required': kwargs.get('points_required'),
             'active': kwargs.get('active'),
-            'service_id': kwargs.get('service_id')
+            'service_id': kwargs.get('service_id'),
         }
+
+        image_data = kwargs.get('image')  # Obtener la imagen en formato base64
+
+        if image_data and image_data.startswith('data:image/'):
+            try:
+                # Elimina el prefijo 'data:image/png;base64,'
+                header, base64_image = image_data.split(',', 1)
+                new_reward['image'] = base64_image
+                print(new_reward['image'])
+            except Exception as e:
+                print(f"Error al procesar la imagen: {str(e)}")
+                new_reward['image'] = None
 
         if new_reward:
             new_rewards = request.env['rewards'].sudo().create(new_reward)

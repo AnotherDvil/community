@@ -7,3 +7,4 @@ proposals_community,proposals_community,model_proposals,community_group_user,1,1
 comments_proposals_community,comments_proposals_community,model_comments,community_group_user,1,1,1,1
 vote_proposals_community,vote_proposals_community,model_vote,community_group_user,1,1,1,1
 notifications_community,notifications_community,model_notifications,community_group_user,1,1,1,1
+rel_user_rel_community,rel_user_rel_community,model_reward_user_rel,community_group_user,1,1,1,1

@@ -27,6 +27,17 @@
       </field>
     </record>
 
+    <record id="canjeados_action" model="ir.actions.act_window">
+      <field name="name">Canjeados</field>
+      <field name="res_model">reward.user.rel</field>
+      <field name="view_mode">tree,form</field>
+      <field name="help" type="html">
+        <p class="oe_view_nocontent_create">
+            No hay canjeados. Haga click para crear una.
+        </p>    
+      </field>
+    </record>
+
     <!-- actions -->
     <menuitem 
       id="community_menu" 
@@ -53,6 +64,13 @@
       parent="community_menu"
       action="proposals_action"
       sequence="4"/>
+
+      <menuitem
+        id="canjeos_community"
+        name="Canjeados"
+        parent="community_menu"
+        action="canjeados_action"
+        sequence="4"/>
 
   </data>
 </odoo>
