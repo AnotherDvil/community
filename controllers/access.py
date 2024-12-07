@@ -114,7 +114,7 @@ class CommunityLogin(http.Controller):
                         'id': usuario.id,
                         'name': usuario.name,
                         'email': usuario.email,
-                        'token': token  # Devolver el token en la respuesta
+                        'token': usuario.token  # Devolver el token en la respuesta
                     }
                 else:
                     response = {
