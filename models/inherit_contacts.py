@@ -100,12 +100,12 @@ class Contacts(models.Model):
         result = self.redeem_reward(reward_id)
         self.register_existing_rewards()
 
-    @api.model
+    """ @api.model
     def create(self, vals):
         record = super(Contacts, self).create(vals)
         token = secrets.token_urlsafe(20)
         record.token = token
-        return record
+        return record """
 
     def get_owner(self):
         for record in self:
