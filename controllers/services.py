@@ -213,11 +213,24 @@ class Services(http.Controller):
             new_data = {
                 'name': kwargs.get('name', service.name),
                 'direction': kwargs.get('direction', service.direction),
-                'image': kwargs.get('image', service.image),
                 'number_phone': kwargs.get('number_phone', service.number_phone),
                 'email': kwargs.get('email', service.email),
-                'owner': kwargs.get('owner', service.owner)
+                'owner': kwargs.get('owner', service.owner),
+                'description': kwargs.get('description', service.description)
             }
+
+            image_data = kwargs.get('image', service.image)  # Obtener la imagen en formato base64
+
+            if image_data and image_data.startswith('data:image/'):
+                try:
+                    # Elimina el prefijo 'data:image/png;base64,'
+                    header, base64_image = image_data.split(',', 1)
+                    new_data['image'] = base64_image
+                    #print(new_data['image'])
+                except Exception as e:
+                    print(f"Error al procesar la imagen: {str(e)}")
+                    new_data['image'] = None
+                    
             service.write(new_data)
             response = {
                 'success': True,
