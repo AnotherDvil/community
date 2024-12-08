@@ -201,7 +201,7 @@ class Services(http.Controller):
         json_response = json.dumps(response)
         return json_response
 
-    @http.route('/services/update/<int:id_service>', type="json", auth="public", methods=['PUT'], csrf=False, cors='*')
+    @http.route('/services/update/<int:id_service>', type="json", auth="public", methods=['POST'], csrf=False, cors='*')
     def update_service(self, id_service, **kwargs):
         service = request.env['services'].sudo().browse(id_service)
         if not service.exists():
