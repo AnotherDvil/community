@@ -21,7 +21,11 @@ class Notifications(http.Controller):
                         'id': notis.id,
                         'message': notis.message,
                         'route': notis.route,
-                        'number': "10+" if unread_count > 10 else unread_count
+                        'number': "10+" if unread_count > 10 else unread_count,
+                        'tipo': notis.tipo,
+                        'usuario_mencionado': notis.usuario_mencionado,
+                        'objeto_solicitado': notis.objeto_solicitado,
+                        'servicio_mencionado': notis.servicio_mencionado
                     })
         else:
             noti_list.append({

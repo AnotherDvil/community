@@ -88,6 +88,10 @@
                                 <field name="is_read" />
                                 <field name="create_date" />
                                 <field name="route" />
+                                <field name="tipo" />
+                                <field name="usuario_mencionado" />
+                                <field name="objeto_solicitado" />
+                                <field name="servicio_mencionado" />
                             </tree>
                         </field>
                     </page>

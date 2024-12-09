@@ -47,6 +47,14 @@ class Services(http.Controller):
             # Busca el usuario por su ID
             user = request.env['res.partner'].sudo().search([('token', '=', token)], limit=1)
             if user:
+                request.env['notifications'].sudo().create({
+                    'name': service.owner.id,
+                    'message': f"Se acaba de unir el empleado: {user.name}",
+                    'route': f"/Empleados",
+                    'tipo': 'new_employee',
+                    'usuario_mencionado': user.name
+                })
+
                 service.sudo().write({'empleados': [(4, user.id)]})
                 # Asocia el usuario con el servicio (empleado)
                 user.sudo().write({'service_id_e': service.id, 'job': 'employee', 'service_id_e': service.id})

@@ -67,7 +67,10 @@ class Reviews(http.Controller):
                     'name': service.owner.id,
                     'message': f"{busqueda.name} ha creado una nueva reseña en tu negocio con una calificación de {new_review['rating']}.",
                     'is_read': False,
-                    'route': f'/services/{service.id}/reviews'
+                    'route': f'/services/{service.id}/reviews',
+                    'tipo': 'new_review',
+                    'usuario_mencionado': busqueda.name,
+                    'objeto_solicitado': new_review['name']
                 }
                 request.env['notifications'].sudo().create(notification_data)
 

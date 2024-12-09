@@ -64,12 +64,25 @@ class Rewards(http.Controller):
             if business_owner:
                 notification_message = (
                     f"{contact.name} ha canjeado la recompensa '{reward_to_redeem.name}' "
-                    f"de tu servicio '{reward_to_redeem.service_id.name}'."
                 )
                 request.env['notifications'].sudo().create({
                     'name': business_owner.id,
                     'message': notification_message,
-                    'route': False
+                    'route': '/rewardsRedeemed',
+                    'tipo': 'redeemed_reward',
+                    'usuario_mencionado': contact.name,
+                    'objeto_solicitado': reward_to_redeem.name
+                })
+
+            business_employee = reward_to_redeem.service_id.empleados
+            for employee in business_employee:
+                request.env['notifications'].sudo().create({
+                    'name': business_employee.id,
+                    'message': notification_message,
+                    'route': '/rewardsRedeemed',
+                    'tipo': 'redeemed_reward',
+                    'usuario_mencionado': contact.name,
+                    'objeto_solicitado': reward_to_redeem.name
                 })
 
             return {
@@ -145,8 +158,10 @@ class Rewards(http.Controller):
                 for follower in followers:
                     notifications.append({
                         'name': follower.id,
-                        'message': f"¡Nueva recompensa disponible! {new_rewards.name}: {new_rewards.description}",
-                        'route': f"/MyRewards"
+                        'message': f"¡Nueva recompensa disponible! {new_rewards.name}",
+                        'route': f"/MyRewards",
+                        'tipo': 'new_reward',
+                        'objeto_solicitado': new_rewards.name
                     })
 
                 # Crea todas las notificaciones en un solo paso
