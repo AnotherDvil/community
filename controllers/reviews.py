@@ -70,7 +70,7 @@ class Reviews(http.Controller):
                     'route': f'/services/{service.id}/reviews',
                     'tipo': 'new_review',
                     'usuario_mencionado': busqueda.name,
-                    'objeto_solicitado': new_review['name']
+                    'objeto_solicitado': new_review['rating']
                 }
                 request.env['notifications'].sudo().create(notification_data)
 

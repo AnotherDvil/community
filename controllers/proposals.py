@@ -185,7 +185,7 @@ class Proposals(http.Controller):
                             'name': follower.id,
                             'message': f"Se ha creado una nueva propuesta en el negocio '{service.name}': {new_proposals['name']}.",
                             'is_read': False,
-                            'route': f'/ProposalDetail/{service.id}/{new_proposal.id}',
+                            'route': f'/ProposalDetail/{service.id}/{new_proposal.id}/{service.name}',
                             'tipo': 'new_proposal_owner',
                             'servicio_mencionado': service.name,
                             'objeto_solicitado': new_proposals['name']
